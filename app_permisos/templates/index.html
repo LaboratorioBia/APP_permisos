@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<header id="header-prin" style="padding-top: 20px;">
+    <img src="{% static 'images/sinapsis_icono.ico' %}" class="logo">
+</header>
+
+<nav id="ver-buttons">
+    <ul class="menu-header d-flex justify-content-between">
+        <li class="btn-ver-permisos"><a type="button" href="{% url 'ver permisos' %}" class="ver-permis btn btn-dark {% if es_coordinador or es_BP %}disabled{% endif %}">Ver Permisos</a></li>
+        <li class="btn-ver-licencias"><a type="button" href="{% url 'ver licencias' %}" class="ver-lic btn btn-dark {% if es_lider %}disabled{% endif %}">Ver Licencias</a></li>
+    </ul>
+</nav>
+
+{% if username %}
+<div id="encabezado">
+    <h2>Página de inicio</h2>
+    <i id="casita" class="bi bi-house-door"></i>
+    <p>Bienvenido, {{ username }}.</p>
+    <hr id="separator"/>
+    <p class="que">¿Qué desea hacer?</p>
+</div>
+{% endif %}
+
+<div id="botones-crear" class="botones-crear">
+    <button id="crear-permiso" class="crear-permiso btn btn-outline-success" {% if es_coordinador or es_admin or es_BP %}disabled{% endif %}>Crear Permiso</button>
+    <button id="crear-licencia" class="crear-licencias btn btn-outline-success" {% if es_lider or es_admin or es_BP %}disabled{% endif %} >Crear Licencia</button>
+</div>
+
+<br>
+<br>
+
+<div id="boton-cerrar-sesion">
+    <a href="{% url 'logout' %}" class="btn btn-outline-danger">Cerrar Sesión</a>
+</div>
+
+<!-- Modal Permisos -->
+<div id="permiso-modal">
+    <div id="modal-content" class="modal-fade-per">
+        <div class="row col-sm-12 mx-auto">
+            <form id="form_permiso" method="post" enctype="multipart/form-data" action="{% url 'inicio' %}">
+                {% csrf_token %}
+                <div id="body" class="mx-auto col-sm-11">
+                    {% include 'modules/form_permisos.html' %}
+                    <div class="row">
+                        <input id="btn-crear-permiso" class="btn btn-outline-success col-sm-3" type="submit" name="permiso" value="Enviar Permiso">
+                        <button id="cerrar-modal-permisos" class="btn btn-outline-danger col-sm-3">Cerrar</button>
+                    </div>
+                    <br>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Licencias -->
+<div id="licencia-modal">
+    <div id="modal-content" class="modal-fade-lic">
+        <div class="row col-sm-12 mx-auto">
+            <form id="form_licencia" method="post" enctype="multipart/form-data" action="{% url 'inicio' %}">
+                {% csrf_token %}
+                <div id="body" class="mx-auto col-sm-11">
+                    {% include 'modules/form_licencias.html' %}
+                    <div class="row">
+                        <input id="btn-crear-licencia" class="col-sm-3" type="submit" name="licencia" value="Enviar Licencia">
+                        <button id="cerrar-modal-licencias" class="btn btn-outline-danger col-sm-3">Cerrar</button>
+                    </div>
+                    <br>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<!-- Aquí añadimos el código para mostrar mensajes -->
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<script src="{% static 'js/javascript.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,605 @@
+/* HEADER PRINCIPAL */
+* {
+    list-style: none;
+    box-sizing: border-box;
+}
+
+#header-prin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 5%;
+    padding-right: 5.5%;
+    height: 70px;
+    background-color: white;
+}
+
+.logo {
+    height: 45px;
+}
+
+.menu-header {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 100%;
+    height: 60px;
+    list-style: none;
+    padding: 0;
+}
+
+.menu-header li {
+    display: inline;
+    margin: 0 10px;
+}
+
+#ver-buttons .btn-ver-permisos {
+    margin: 0 15px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.ver-permis {
+    color: white;
+}
+
+.ver-permis:hover {
+    text-decoration: none;
+    color: white;
+}
+
+#ver-buttons .btn-ver-licencias {
+    margin: 0 15px;
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-weight: 400;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.ver-lic {
+    color: white;
+}
+
+.ver-lic:hover {
+    text-decoration: none;
+    color: white;
+}
+
+#body-base {
+    height: 100vh;
+    position: relative;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.5)),
+        /* url('/static/images/fondo.jpg')*/
+    ;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* FIN HEADER PRINCIPAL */
+
+/* ENCABEZADO INDEX */
+#encabezado {
+    text-align: center;
+    background-color: #ffffff;
+}
+
+.que {
+    padding: 10px;
+}
+
+#separator {
+    width: 1200px;
+    margin: 0 auto;
+    border: none;
+    height: 2px;
+    background-color: black;
+}
+
+#encabezado h2 {
+    text-align: center;
+    padding-top: 20px;
+    color: black;
+}
+
+#encabezado p {
+    text-align: center;
+    color: black;
+}
+
+#casita {
+    font-size: 25px;
+}
+
+/* FIN ENCABEZADO INDEX */
+
+/* ENCABEZADO LOGIN */
+/* #encabezado-login {
+    color: black;
+}
+
+#texto-username {
+    color: black;
+}
+
+#texto-password {
+    color: black;
+}
+
+#boton-entrar-login {
+    color: black;
+} */
+#login {
+  width: 280px;
+}
+
+#login form span {
+  background-color: #363b41;
+  border-radius: 3px 0px 0px 3px;
+  color: #606468;
+  display: block;
+  float: left;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  width: 50px;
+}
+
+#login form input {
+  height: 50px;
+}
+
+#login form input[type="text"], input[type="password"] {
+  background-color: #3b4148;
+  border-radius: 0px 3px 3px 0px;
+  color: #ffffff;
+  margin-bottom: 1em;
+  padding: 0 16px;
+  width: 230px;
+}
+
+#login form input[type="submit"] {
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-color: #0b0004;
+  color: #eee;
+  font-weight: bold;
+  margin-bottom: 2em;
+  text-transform: uppercase;
+  width: 280px;
+}
+
+#login > p {
+  text-align: center;
+}
+
+#login > p span {
+  padding-left: 5px;
+}
+
+/* FIN ENCABEZADO LOGIN */
+
+/* BOTONES DE CREAR Y CERRAR SESION */
+#botones-crear {
+    text-align: center;
+}
+
+#botones-crear button {
+    color: black;
+}
+
+#boton-cerrar-sesion {
+    text-align: center;
+}
+
+#boton-cerrar-sesion a {
+    text-decoration: none;
+    color: black;
+}
+
+/* FIN BOTONES DE CREAR Y CERRAR SESION */
+
+/* MODAL PERMISOS */
+/* titulo */
+#cabeza-form h3.centered-title {
+    text-align: center;
+}
+
+.fs-7{
+    font-size: 12px;
+
+}
+
+.fs-8{
+    font-size: 14px;
+}
+
+.fs-9{
+    font-size: 11px;
+}
+
+.fs-10{
+    font-size: 10px;
+}
+
+#permiso-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 20px;
+}
+
+#modal-content {
+    background-color: #ffffff;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 1000px;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.form{
+    width: 800px;
+}
+
+#btn-crear-permiso {
+    margin: 0 auto;
+    display: block;
+}
+
+.crear-permiso:hover,
+.crear-permiso:focus {
+    animation: pulse 1s;
+    box-shadow: 0 0 0 2em transparent;
+}
+
+
+#cerrar-modal-permisos {
+    margin: 0 auto;
+    display: block;
+    width: 135px;
+    background-color: #cc0000;
+    color: white;
+}
+
+/* FIN MODAL PERMISOS */
+
+/* MODAL LICENCIAS */
+#cabeza-form-licencias h3.centered-title {
+    text-align: center;
+}
+
+#licencia-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+
+.form-container {
+    margin: 0 20px;
+}
+
+#btn-crear-licencia {
+    margin: 0 auto;
+    display: block;
+}
+
+.crear-licencias:hover,
+.crear-licencias:focus {
+    animation: pulse 1s;
+    box-shadow: 0 0 0 2em transparent;
+}
+
+#cerrar-modal-licencias {
+    margin: 0 auto;
+    display: block;
+}
+/* FIN MODAL LICENCIAS */
+
+/* VER PERMISOS */
+#header-prin-permis {
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+    height: 80px;
+    background-color: white;
+}
+
+.VP-header {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.VP-header a {
+    border-radius: 15%;
+}
+
+#header-vp {
+    width: 48.2%;
+}
+
+#check-permis {
+    font-size: 25px;
+}
+
+#tabla-permisos {
+    background-color: #f2f2f2;
+}
+
+#encabezado-ver-permisos {
+    padding-top: 30px;
+    padding-bottom: 25px;
+    text-align: center;
+    color: black;
+}
+
+.atras-vp {
+    position: relative;
+    height: 30px;
+}
+
+.atras-vp i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+}
+/* FIN VER PERMISOS */
+
+/* VER LICENCIAS */
+#header-prin-lic {
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+    height: 80px;
+    background-color: white;
+}
+
+.VL-header {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.VL-header a {
+    border-radius: 15%;
+}
+
+#header-vl {
+    width: 48.2%;
+}
+
+#check-lic {
+    font-size: 25px;
+}
+
+#encabezado-ver-licencias {
+    padding-top: 30px;
+    padding-bottom: 25px;
+    text-align: center;
+    color: black;
+}
+
+.atras-vl {
+    position: relative;
+    height: 30px;
+}
+
+.atras-vl i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: black;
+}
+
+/* FIN VER LICENCIAS */
+
+/* Estilo ventanas modales */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    /* padding: 20px; */
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    opacity: 1;
+    transition: opacity 0.3s;
+    margin: auto;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content.show {
+    opacity: 1;
+}
+
+/* Fin estilos ventanas modales */
+
+/* modal editar permisos */
+#modal-edicion-permisos {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Update Permisos y Licencias */
+.logo-container {
+    text-align: center;
+}
+
+.pencil-icon-container {
+    text-align: center;
+}
+
+.bi-pencil-square {
+    font-size: 2em;
+    /* Tamaño del ícono, puedes ajustar el valor según tus necesidades */
+}
+
+form {
+    max-width: 600px;
+    /* Ajusta el valor según sea necesario */
+    margin: auto;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-field input,
+.form-field select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+input[type="submit"],
+button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    /* Puedes ajustar el valor según sea necesario */
+}
+
+.save-changes-button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.close-button {
+    background-color: #cc0000;
+    /* Color rojo de fondo */
+    color: white;
+    /* Color blanco del texto */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.clearablefileinput label {
+    display: inline-block;
+}
+
+.clearablefileinput input[type="checkbox"] {
+    position: relative;
+    top: -3px;
+    display: inline-block;
+}
+
+#datos_adjuntos_licencias-clear_id {
+    position: relative;
+    top: -3px;
+}
+
+/* ERRORES */
+.messages {
+    margin: 0 auto;
+    /* Esto centra el bloque de mensajes horizontalmente */
+    width: 50%;
+    /* Puedes ajustar el ancho según tus necesidades */
+    padding: 10px;
+    list-style: none;
+    text-align: center;
+    /* Alinea el texto en el centro */
+}
+
+.messages li {
+    margin-bottom: 10px;
+    padding: 10px;
+    text-align: center;
+    /* Alinea el texto en el centro */
+}
+
+.success {
+    background-color: #d4edda;
+    /* Color de fondo verde para mensajes de éxito */
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.error {
+    background-color: #f8d7da;
+    /* Color de fondo rojo para mensajes de error */
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+/* FIN ERRORES */
+
+/* Alineando boton de exportar excel */
+.left-col {
+    float: left;
+    width: 50%;
+}
+
+.right-col {
+    float: right;
+    width: 50%;
+}
+/* FIN Alineando boton de exportar excel */

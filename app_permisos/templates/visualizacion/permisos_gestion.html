@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Ver Permisos{% endblock %}
+{% block content %}
+
+<header id="header-prin-permis" style="padding-top: 20px;">
+    <nav id="header-vp">
+        <ul class="VP-header">
+            <a href="{% url 'inicio' %}" class="atras-vp btn btn-outline-danger">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+
+            <a href="{% url 'permisos_chart' %}" class="atras-vp btn btn-outline-warning" style="margin-left: 200%;">
+                <i class="bi bi-eye-fill"></i> 
+            </a>
+        </ul>
+    </nav>
+    <div>
+        <img src="{% static 'images/sinapsis_icono.ico' %}" class="logo">
+    </div>
+</header>
+
+<div id="encabezado-ver-permisos">
+    <h3>Ver Permisos</h3>
+    <i id="check-permis" class="bi bi-card-checklist"></i>
+</div>
+
+<br>
+
+<div class="col-sm-11 mx-auto ">
+    {% if es_admin %}
+    <div id="filtro-fechas" class="text-center">
+        <label for="fecha-inicio">Desde:</label>
+        <input type="date" id="fecha-inicio" name="fecha-inicio">
+
+        <label for="fecha-fin">Hasta:</label>
+        <input type="date" id="fecha-fin" name="fecha-fin">
+
+        <button id="filtrar-por-fechas" class="btn btn-primary">Filtrar</button>
+    </div>
+    {% endif %}
+
+    <br>
+
+    <select id="selectAreaPermisos" class="form-select" style="width: 120px; margin-right: 50px;"></select>
+    
+    <br>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tabla-permisos" class="table table-striped table-bordered table-responsive">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Creado</th>
+                            <th>Nombre Completo</th>
+                            <th>Cédula</th>
+                            <th>Área</th>
+                            <th>Turno</th>
+                            <th>Fecha Permiso</th>
+                            <th>Fecha Fin Permiso</th>
+                            <th>Hora Salida</th>
+                            <th>Hora Llegada</th>
+                            <th>Motivo Permiso</th>
+                            <th>Nombre Coordinador</th>
+                            <th>Compensa Tiempo</th>
+                            <th>Datos Adjuntos</th>
+                            <th>Observación</th>
+                            <th>Creado Por</th>
+                            <th class="bg-primary">Verificación</th>
+                            <th class="bg-primary">Estado</th>
+                            <th class="bg-primary">Verificado Por</th>
+                            <th class="bg-primary">Fecha de Verificacion</th>
+                            {% if es_admin or es_lider or es_coordinador or es_superusuario %}
+                            <th class="bg-success"></th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for permiso in lista_permisos %}
+                        <tr>
+                            <td>
+                                <span style="display:none;">{{ permiso.creado|date:'Y-m-d' }}</span>
+                                {{ permiso.creado|date:"Y-m-d" }}
+                            </td>
+                            <td>{{ permiso.nombre_completo }}</td>
+                            <td>{{ permiso.cedula }}</td>
+                            <td>{{ permiso.area }}</td>
+                            <td>{{ permiso.turno }}</td>
+                            <td>{{ permiso.fecha_permiso }}</td>
+                            <td>{{ permiso.fecha_fin_permiso }}</td>
+                            <td>{{ permiso.hora_salida }}</td>
+                            <td>{{ permiso.hora_llegada }}</td>
+                            <td>{{ permiso.motivo_permiso }}</td>
+                            <td>{{ permiso.nombre_coordinador }}</td>
+                            <td>{{ permiso.compensa_tiempo }}</td>
+                            <td>
+                                {% if permiso.datos_adjuntos %}
+                                <a href="{% url 'mostrar_archivo' permiso.id %}" target="_blank">{{ permiso.nombre_archivo }}</a>
+                                {% else %} 
+                                Sin archivo adjunto
+                                {% endif %}
+                            </td>
+                            <td>{{ permiso.observacion }}</td>
+                            <td>{{ permiso.creado_por }}</td>
+                            <td>{{ permiso.verificacion }}</td>
+                            <td>{{ permiso.estado }}</td>
+                            <td>{{ permiso.verificado_por}}</td>
+                            {% if es_admin or es_lider or es_coordinador or es_superusuario %}
+                            <td>{{ permiso.fecha_verificacion }}</td>
+                            <td>
+                                <a type="button" href="{% url 'update_permiso' permiso.id %}" class="btn btn-success" data-permiso-id="{{ permiso.id }}"><i class="bi bi-pencil"></i></a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/javascript.js' %}"></script>
+<script src="{% static 'js/permisoEdit.js' %}"></script>
+
+{% endblock %}

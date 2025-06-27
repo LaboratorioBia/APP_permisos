@@ -1,0 +1,138 @@
+{% load static %}
+
+<div id="cabeza-form-licencias">
+    <h3 class="centered-title">Crear Licencia</h3>
+    <br>
+</div>
+
+<div id="" class="mx-auto">
+    <div id="body-form" class="">
+        <div class="form-container">
+
+            <div class="row">
+                <div class="col-3 form-group text-center fs-7">
+                    {{ form_licencias.cedula.label_tag }}
+                    {{ form_licencias.cedula }}
+                </div>
+                <div class="col-5 form-group text-center fs-7">
+                    {{ form_licencias.nombre_completo.label_tag }}
+                    {{ form_licencias.nombre_completo }}
+                </div>
+                <div class="col-4 form-group text-center fs-7">
+                    {{ form_licencias.area.label_tag }}
+                    {{ form_licencias.area }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 text-center fs-7">
+                    {{ form_licencias.empresa.label_tag }}
+                </div>
+                <div class="col-md-3 text-center fs-7">
+                    {{ form_licencias.fecha_inicio.label_tag }}
+                </div>
+                <div class="col-md-3 text-center fs-7">
+                    {{ form_licencias.fecha_fin.label_tag }}
+                </div>
+                <div class="col-md-4 text-center fs-7">
+                    {{ form_licencias.motivo_licencia.label_tag }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 form-group">
+                    {{ form_licencias.empresa }}
+                </div>
+                <div class="col-md-3 form-group">
+                    {{ form_licencias.fecha_inicio }}
+                </div>
+                <div class="col-md-3 form-group">
+                    {{ form_licencias.fecha_fin }}
+                </div>
+                <div class="col-md-4 form-group">
+                    {{ form_licencias.motivo_licencia }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5 form-group text-center fs-7">
+                    {{ form_licencias.nombre_coordinador.label_tag }}
+                </div>
+                <div class="col-md-7 text-center fs-7">
+                    {{ form_licencias.tipo_licencia.label }}
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    {{ form_licencias.nombre_coordinador }}
+                </div>
+                <div class="col-md-6 form-group text-center fs-7">
+                    {{ form_licencias.tipo_licencia }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">   
+                    {{ form_licencias.datos_adjuntos_licencias.label_tag }}
+                    {{ form_licencias.datos_adjuntos_licencias }}
+                </div>
+                <div class="col-md-6 form-group text-center fs-7">
+                    {{ form_licencias.observacion_licencia.label_tag }}
+                    {{ form_licencias.observacion_licencia }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group text-center fs-7">
+                    {{ form_licencias.verificacion_licencia.label_tag }}
+                    {{ form_licencias.verificacion_licencia }}
+                </div>
+                <div class="col-md-6 form-group text-center fs-7">
+                    {{ form_licencias.aprobacion_rrhh.label_tag }}
+                    {{ form_licencias.aprobacion_rrhh }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group text-center fs-7">
+                    {{ form_licencias.estado_licencia.label_tag }}
+                    {{ form_licencias.estado_licencia }}
+                </div>
+                <div class="col-md-6 form-group text-center fs-7">
+                    {{ form_licencias.observacion_rrhh.label_tag }}
+                    {{ form_licencias.observacion_rrhh }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Cambia "id_cedula" al ID real de tu campo de cédula para el formulario de licencias
+        $("#id_cedula_licencia").change(function () {
+            var cedula = $(this).val();
+
+            // Realiza una solicitud AJAX al servidor para obtener el nombre y la sucursal
+            $.ajax({
+                url: "/obtener_nombre/",
+                type: "GET",
+                data: {"cedula": cedula},
+                success: function (data) {
+                    if (data.nombre) {
+                        // Cambia "id_nombre_completo" al ID real de tu campo de nombre para el formulario de licencias
+                        $("#id_nombre_completo_licencia").val(data.nombre);
+                    } else {
+                        console.error("Empleado no encontrado");
+                    }
+                },
+                error: function () {
+                    console.error("Error al obtener el nombre o la sucursal");
+                }
+            });
+        });
+    });
+</script>

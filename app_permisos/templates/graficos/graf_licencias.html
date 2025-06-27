@@ -1,0 +1,571 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Detalles Licencias{% endblock %}
+{% block content %}
+
+<header id="header-prin-lic">
+    <nav id="header-vl">
+        <ul class="VL-header">
+            <a href="{% url 'ver licencias' %}" class="atras-vl btn btn-outline-danger">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </ul>
+    </nav>
+    <div>
+        <img src="{% static 'images/sinapsis_icono.ico' %}" class="logo">
+    </div>
+</header>
+
+<div id="encabezado-ver-licencias" >
+    <h3 style="text-align: center;">Detalles de Licencias</h3>
+    <i id="check-lic" class="bi bi-bar-chart-line"></i>
+</div>
+
+<body id="body-graf" style="padding: 1em;">
+    <!-- Div del gráfico de paretos -->
+    <div class="card" style="width: 95%; margin: auto; margin-bottom: 20px; display: block; text-align: center;">
+        <div style="padding-top: 20px; display: flex; justify-content: space-between;">
+            <button id="toggleButton2" class="btn btn-outline-warning" style="margin-left: 10px; color: black;" onclick="actualizar_cantidad_licencias(this.value)">Cantidad de Licencias</button>
+            <select id="selectArea" class="form-select" style="width: 120px; margin-right: 50px;" onchange="updateChartByArea(this.value)"></select>
+            <select id="selectDias" class="form-select" style="width: 120px; margin-right: 50px;"
+            onchange="updateChartByDays(this.value)"></select>
+            <select id="selectMes" class="form-select" style="width: 120px; margin-right: 50px;" onchange="updateChartByMonth(this.value)">
+                <option value="0">Todos</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+            <button id="toggleButton" class="btn btn-outline-warning" style="margin-right: 10px; color: black;" onclick="actualizar_licencias_chart_horas(this.value)">Horas Mensuales</button>
+        </div> 
+        <div class="card-body" style="height: 400px; width: 90%; position: relative;">
+            <div id="chart-container" style="height: 100%; width: 120%; padding-right: 20%;"></div>
+        </div>
+    </div>
+
+    <!-- Div del gráfico de linea de tiempo -->
+    <div class="card" style="width: 95%; margin: auto; margin-bottom: 20px; display: block;">
+        <div class="card-body" style="height: 400px; width: 90%; position: relative;">
+            <div id="chart-container-mes" style="height: 100%; width: 115%; padding-right: 9%;"></div>
+        </div>
+    </div>
+
+    <!-- Cuadro para ver motivo de licencia mas frecuente de los operarios -->
+    <div class="card" style="width: 95%; margin: auto; margin-bottom: 20px; display: block;">
+        <div class="table table-responsive">
+            <div class="container-cantidad-licencias table-responsive pt-4">
+                <h5 style="font-weight: bold;" class="text-center">Frecuencia de motivos por operarios</h4>
+                <table class="table-fill table table-striped table-bordered table-responsive mx-auto">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Nombre Completo</th>
+                            <th class="text-left">Motivo De La Licencia</th>
+                            <th class="text-left">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="datos-licencias-body" class="table-hover">
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-lef"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<!-- Script para obtener las areas en el boton y que este filtre el grafico -->
+<script>
+    /**
+     * Este script maneja la actualización dinámica de un gráfico de licencias basado en áreas seleccionadas.
+     * 
+     * Funcionalidades principales:
+     * 1. Al cargar la página, realiza una solicitud AJAX para obtener las áreas disponibles y las añade a un elemento
+     *    <select>.
+     * 2. Detecta cambios en la selección del área y actualiza el gráfico correspondiente mediante una solicitud asíncrona.
+     * 3. La función `updateChartByArea` realiza una solicitud fetch a una URL construida dinámicamente para obtener datos de
+     *    licencias, valida los datos recibidos y actualiza el gráfico en la página.
+     * 
+     */
+    $(document).ready(function() {
+        $.ajax({
+            url: '/get_areas/',
+            method: 'GET',
+            success: function(data) {
+                var selectArea = $('#selectArea');
+                selectArea.empty(); 
+                
+                selectArea.append(new Option('Todos', 'all'));
+                data.forEach(function(area) {
+                    selectArea.append(new Option(area.name, area.id)); 
+                });
+            },
+            error: function(error) {
+                console.log("Error al obtener las áreas: ", error);
+            }
+        });
+
+        $('#selectArea').change(function(){
+            var selectedArea = $(this).val();
+            updateChartByArea(selectedArea);
+        });
+    });
+
+    /**
+     * Función asíncrona para actualizar el gráfico basado en el área seleccionada.
+     * 
+     * @param {string} areaValue - El valor del área seleccionada ('all' para todas las áreas o ID de área específicada).
+     * 
+     */
+    async function updateChartByArea(areaValue){
+        var url = '/actualizar_licencias_chart_area/' + areaValue + '/';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data && data.licencias && data.motivo_licencia && data.cantidad_licencias && data.porcentaje_acumulado){
+                var new_data = grafico(data.motivo_licencia, data.cantidad_licencias, data.porcentaje_acumulado, 'Cantidad de Licencias');
+                myChart.setOption(new_data);
+            } else{
+                console.error("Los datos recibidos de la vista están incompletos");
+            }
+        } catch (error){
+            console.error("Error al obtener los datos de la vista", error);
+        }
+    }
+</script>
+
+<!-- Script para actualizar el grafico con el dia-mes-año seleccionado -->
+<script>
+    /**
+     * Este script maneja la actualización dinámica de un gráfico de licencias basado en días seleccionados.
+     * 
+     * Funcionalidades principales:
+     * 1. Al cargar la página, realiza una solicitud AJAX para obtener los días disponibles y los añade a un elemento
+     *    <select>.
+     * 2. Detecta cambios en la selección de día y actualiza el gráfico correspondiente mediante una solicitud asíncrona.
+     * 3. La función `updateChartByDays` realiza una solicitud fetch a una URL construida dinámicamente para obtener
+     *    datos de permisos, valida los datos recibidos y actualiza el gráfico en la página.
+     */
+    $(document).ready(function(){
+        $.ajax({
+            url: '/get_days_licenses/',
+            method: 'GET',
+            success: function(data){
+                var selectDay = $('#selectDias');
+                selectDay.empty();
+
+                selectDay.append(new Option('Todos', 'all'));
+                data.fechas.forEach(function(day){
+                    selectDay.append(new Option(day, day));
+                });
+            },
+            error: function(error){
+                console.log("Error al obtener los dias: ", error);
+            }
+        });
+
+        $('#selectDias').change(function(){
+            var selectedDay = $(this).val();
+            updateChartByDays(selectedDay);
+        });
+    });
+
+
+    /**
+     * Función asíncrona para actualizar el gráfico basado en el día seleccionado.
+     * 
+     *  @param {string} daysValue - El valor del día seleccionado ('all' para todos los días o fecha específica).
+     * 
+    */
+    async function updateChartByDays(daysValue){
+        var url = '/actualizar_licencias_chart_dias/' + daysValue + '/';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data && data.licencias && data.motivo_licencia && data.cantidad_licencias && data.porcentaje_acumulado){
+                var new_data = grafico(data.motivo_licencia, data.cantidad_licencias, data.porcentaje_acumulado, 'Cantidad de Permisos');
+                myChart.setOption(new_data);
+            } else{
+                console.error("Los datos recibidos de la vista están incompletos");
+            }
+        } catch (error){
+            console.error("Error al obtener los datos de la vista", error);
+        }
+    }
+</script>
+
+<!-- Script para el cuadro -->
+<script>
+    /**
+     * Este script se encarga de realizar una solicitud AJAX para obtener datos sobre la cantidad de licencias
+     * y actualizar la tabla licencias por operarios con esta información.
+     * 
+     * Funcionalidades principales:
+     * 1. Al cargar la página, realiza una solicitud AJAX a la URL proporcionada por el servidor para obtener los datos
+     *    de licencias.
+     * 2. Procesa la respuesta para extraer la información de licencias.
+     * 3. Actualiza el cuerpo de una tabla HTML con los datos recibidos, creando una fila por cada registro.
+     * 
+     */
+    $(document).ready(function(){
+        $.ajax({
+            url: "{% url 'chart_cant_licencias' %}",
+            type: 'GET',
+            success: function(response){
+                var data = response.Lic;
+                var tbody = $('#datos-licencias-body');
+                tbody.empty();
+                data.forEach(function(row){
+                    var tr = $('<tr>');
+                    tr.append('<td>' + row.nombre_completo + '</td>');
+                    tr.append('<td>' + row.motivo_licencia + '</td>');
+                    tr.append('<td>' + row.cantidad + '</td>');
+                    tbody.append(tr);
+                });
+            }
+        });
+    });
+</script>
+
+<!-- Grafico de Pareto -->
+<script>
+    /**
+     * Este script se encarga de generar y configurar un gráfico de Pareto utilizando ECharts.
+     * 
+     * Funcionalidades principales:
+     * 1. Se define la función 'grafico' que configura el gráfico de Pareto con los datos proporcionados.
+     * 2. Inicializa y configura el gráfico al cargar el documento.
+     * 
+     * Variables backup:
+     * - 'porcentajes_acumulados_licencias_backup': Respaldo de los datos de porcentajes acumulados.
+     * - 'tiposDataDefault_backup': Respaldo de los datos de tipos de licencias.
+     * - 'licenciasDataDefault_backup': Respaldo de los datos de licencias.
+     */
+
+    let porcentajes_acumulados_licencias_backup;
+    let tiposDataDefault_backup;
+    let licenciasDataDefault_backup;
+
+    /**
+     * Función que configura y devuelve las opciones iniciales para el gráfico de Pareto.
+     * 
+     * @param {Array} tiposDataDefault - Datos de los tipos de licencias.
+     * @param {Array} licenciasDataDefault - Datos de las cantidades de licencias.
+     * @param {Array} porcentajes_acumulados_licencias - Datos de los porcentajes acumulados de licencias.
+     * @param {String} namebar - Nombre de la barra en el gráfico.
+     * @returns {Object} initialOption - Opciones iniciales configuradas para el gráfico.
+     */
+    function grafico(tiposDataDefault, licenciasDataDefault, porcentajes_acumulados_licencias, namebar){
+        initialOption = {
+            title: {
+                text: 'Gráfico de Pareto - Tipos de Licencias',
+                left: 'center',
+                top: '10%',
+                textStyle: {
+                    fontSize: '14'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow',
+                },
+            },
+            legend: {
+                data: [namebar, 'Porcentaje Acumulado'],
+            },
+            xAxis: {
+                type: 'category',
+                data: tiposDataDefault,
+            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: namebar,
+                    axisLabel: {
+                        formatter: '{value}',
+                    },
+                },
+                {
+                    type: 'value',
+                    name: 'Porcentaje Acumulado',
+                    axisLabel: {
+                        formatter: '{value} %',
+                    },
+                    position: 'right',
+                    offset: 50,
+                    splitNumber: 5,
+                    splitLine: {
+                        show: false,
+                    },
+                },
+            ],
+            series: [
+                {
+                    name: namebar,
+                    type: 'bar',
+                    data: licenciasDataDefault,
+                },
+                {
+                    name: 'Porcentaje Acumulado',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: porcentajes_acumulados_licencias,
+                },
+            ],
+        };
+        return initialOption;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var myChart;
+        var initialOption; 
+
+        var tipos_licencias = JSON.parse('{{ tipos_licencias|safe }}');
+        var licenciasDataDefault = tipos_licencias.map(function (tipo) {
+            return tipo.count;
+        });
+        licenciasDataDefault_backup = licenciasDataDefault;
+
+        var porcentajes_acumulados_licencias = JSON.parse('{{ porcentajes_acumulados|safe }}');
+        porcentajes_acumulados_licencias_backup = porcentajes_acumulados_licencias;
+
+        var tiposDataDefault = tipos_licencias.map(function (tipo) {
+            return tipo.nombre;
+        });
+        tiposDataDefault_backup = tiposDataDefault
+
+        myChart = echarts.init(document.getElementById('chart-container'));
+
+        var info = grafico(tiposDataDefault, licenciasDataDefault, porcentajes_acumulados_licencias, 'Cantidad de Licencias');
+        myChart.setOption(info);
+
+    });
+</script> 
+
+<!-- Script para actualizar el grafico con el mes seleccionado -->
+<script>
+    /**
+     * Este script se encarga de inicializar y actualizar el gráfico de pareto basado en datos obtenidos de la base de
+     * datos.
+     * 
+     * Funcionalidades principales:
+     * 1. Inicializa el gráfico ECharts en el contenedor especificado.
+     * 2. Define la función `getOptionChart` para obtener datos del servidor de manera asíncrona.
+     * 3. Define la función `updateChartByMonth` para actualizar el gráfico con los datos obtenidos.
+     */
+    var myChart = echarts.init(document.getElementById('chart-container'));
+    
+    /**
+     * Función asíncrona que obtiene las opciones del gráfico desde el servidor para un mes específico.
+     * 
+     * @param {String} mes - El mes para el cual se quieren obtener los datos.
+     * @returns {Object} Datos del gráfico en formato JSON.
+     */
+    const getOptionChart = async(mes) => {
+        try {
+            const response = await fetch(`/actualizar_licencias_chart/${mes}/`);
+            return await response.json();
+        } catch (ex) {
+            alert(ex);
+        }
+    };
+
+    /**
+     * Función asíncrona que actualiza el gráfico basado en el mes seleccionado.
+     * 
+     * @param {String} monthValue - El valor del mes seleccionado.
+     */
+    async function updateChartByMonth(monthValue) {
+        var url = '/actualizar_licencias_chart/' + monthValue + '/';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data && data.licencias && data.motivos_licencias && data.cantidad_licencias && data.PorcentajeAcumulado) {
+                var new_data = grafico(data.motivos_licencias, data.cantidad_licencias, data.PorcentajeAcumulado, 'Cantidad de Licencias');
+                myChart.setOption(new_data); 
+            } else {
+                console.error("Los datos recibidos de la vista esta incompletos.");
+            }
+        } catch (error) {
+            console.error("Error al obtener datos de la vista:", error);
+        }
+    }
+</script>
+
+<!-- Script para funcionalidad del botón Horas Mensuales -->
+<script>
+    /**
+     * Este script se encarga de actualizar el grafico de pareto con los datos de las horas mensuales de la licencias.
+     * 
+     * Funcionalidades principales:
+     * 1. Define la función `actualizar_licencias_chart_horas` para obtener datos de licencias desde la base de datos.
+     * 2. Verifica si los datos obtenidos están completos y actualiza el gráfico.
+     * 
+     */
+    async function actualizar_licencias_chart_horas(){
+        var url = '/actualizar_licencias_chart_horas/'
+        try{
+            const response = await fetch(url);
+
+            const data = await response.json();
+
+            if (data && data.motivos_licencias && data.horas_mensuales && data.porcentaje_acumulado){
+                var newdata = grafico(data.motivos_licencias, data.horas_mensuales, data.porcentaje_acumulado, 'Horas Mensuales');
+                myChart.setOption(newdata)
+            } else {
+                console.error("Los datos recibidos de la vista esta incompletos.");
+            }
+        } catch (error) {
+            console.error("Error al obtener datos de la vista:", error);
+        }
+    }
+</script>
+
+<!-- Script para funcionalidad del botón Cantidad de Licencias -->
+<script>
+    /**
+     * Este script se encarga de actualizar el gráfico de paretos con datos relacionados a la cantidad de licencias.
+     * 
+     * Funcionalidades principales:
+     * 1. Define la función 'actualizar_cantidad_licencias' para verificar si los datos de respaldo están disponibles.
+     * 2. Si los datos están completos, se actualiza el gráfico con los datos respaldados.
+     */
+    function actualizar_cantidad_licencias(){
+        if (tiposDataDefault_backup && licenciasDataDefault_backup && porcentajes_acumulados_licencias_backup){
+                var newdata = grafico(tiposDataDefault_backup, licenciasDataDefault_backup, porcentajes_acumulados_licencias_backup, 'Cantidad de Licencias');
+                myChart.setOption(newdata)
+            } else {
+                console.error("Los datos recibidos de la vista esta incompletos.");
+            }
+    }
+</script>
+
+<!-- Gráfico de línea de tiempo para licencias -->
+<script>
+    /**
+     * Este script se encarga de generar y actualizar un gráfico de linea de tiempo 
+     * que muestra la cantidad de licencias y horas mensuales.
+     *
+     * Funcionalidades principales:
+     * 1. Define la función `timeline_grafic` que configura las opciones del gráfico.
+     * 2. Usa `fetch` para obtener los datos necesarios desde una URL y luego actualiza el gráfico con esos datos.
+     */
+
+     /**
+     * Función que configura las opciones del gráfico.
+     * @param {Array} months - Lista de meses.
+     * @param {Array} counts - Lista de cantidad de licencias por mes.
+     * @param {Array} hoursMonthlyTrue - Lista de horas mensuales verdaderas.
+     * @returns {Object} - Objeto de opciones configuradas para ECharts.
+     */
+        function timeline_grafic(months, counts, hoursMonthlyTrue) {
+        optionMes = {
+            title: {
+                text: 'Licencias y Horas Mensuales',
+                left: 'center',
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow',
+                },
+            },
+            xAxis: {
+                type: 'category',
+                data: months,
+            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'Cantidad de Licencias',
+                },
+                {
+                    type: 'value',
+                    name: 'Horas Mensuales',
+                }
+            ],
+            grid: {
+                right: '16%',  
+                left: '16%',
+            },
+            series: [
+                {
+                    name: 'Cantidad de Licencias',
+                    data: counts,
+                    type: 'line',
+                    yAxisIndex: 0,
+                },
+                {
+                    name: 'Horas Mensuales',
+                    data: hoursMonthlyTrue,
+                    type: 'bar',
+                    yAxisIndex: 1,
+                }
+            ],
+        };
+        return optionMes;
+    }
+
+    /**
+     * Evento que se ejecuta cuando el DOM ha terminado de cargarse.
+     * Realiza una solicitud para obtener los datos y configura el gráfico con los datos recibidos.
+     */
+    document.addEventListener('DOMContentLoaded', function () {
+        var myChartMes;
+        var optionMes; 
+        var url = '/timeline_licencia_chart/';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var months = data.month.map(item => item.month);
+                var counts = data.month.map(item => item.count);
+                var hoursMonthlyTrue = data.true_monthly_hours;
+
+                myChartMes = echarts.init(document.getElementById('chart-container-mes'));
+
+                var info = timeline_grafic(months, counts, hoursMonthlyTrue);
+                myChartMes.setOption(info);
+            });
+    });
+</script>
+
+{% endblock %}

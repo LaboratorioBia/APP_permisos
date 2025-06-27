@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Ver Licencias{% endblock %}
+{% block content %}
+
+<header id="header-prin-lic" style="padding-top: 20px;">
+    <nav id="header-vl">
+        <ul class="VL-header">
+            <a href="{% url 'inicio' %}" class="atras-vl btn btn-outline-danger">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+
+            <a href="{% url 'licencias_chart' %}" class="atras-vl btn btn-outline-warning" style="margin-left: 200%;">
+                <i class="bi bi-eye-fill"></i> 
+            </a>
+        </ul>
+    </nav>
+    <img src="{% static 'images/sinapsis_icono.ico' %}" class="logo">
+</header>
+
+<div id="encabezado-ver-licencias">
+    <h3>Ver Licencias</h3>
+    <i id="check-lic" class="bi bi-clipboard-check"></i>
+</div>
+
+<br>
+
+<div class="col-sm-11 mx-auto">
+    {% if es_admin %}
+    <div id="filtro-fechas" class="text-center">
+        <label for="fecha-inicio">Desde:</label>
+        <input type="date" id="fecha-inicio" name="fecha-inicio">
+
+        <label for="fecha-fin">Hasta:</label>
+        <input type="date" id="fecha-fin" name="fecha-fin">
+
+        <button id="filtrar-por-fechas" class="btn btn-primary">Filtrar</button>
+    </div>
+    {% endif %}
+
+    <br>
+
+    <select id="selectAreaLicencias" class="form-select" style="width: 120px; margin-right: 50px;"></select>
+
+    <br>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tabla-licencias" class="table table-striped table-bordered table-responsive">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Creado</th>
+                            <th>Creada Por</th>
+                            <th>Nombre Completo</th>
+                            <th>Cedula</th>
+                            <th>Empresa</th>
+                            <th>Area</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
+                            <th>Tipo Licencia</th>
+                            <th>Motivo Licencia</th>
+                            <th>Observacion</th>
+                            <th>Nombre Coordinador</th>
+                            <th>Datos Adjuntos</th>
+                            <th class="bg-primary">Verificacion</th>
+                            <th class="bg-primary">Estado</th>
+                            <th class="bg-primary">Verificada Por</th>
+                            <th class="bg-primary">Fecha de Verificacion</th>
+                            <th class="bg-warning" style="color: black;">Aprobacion BP</th>
+                            <th class="bg-warning" style="color: black;">Observacion BP</th>
+                            <th class="bg-warning" style="color: black;">Verificada Por BP</th>
+                            <th class="bg-warning" style="color: black;">Fecha de Aprobacion</th>
+                            {% if es_admin or es_lider or es_coordinador or es_superusuario or es_BP %}
+                            <th class="bg-success"></th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for licencia in lista_licencias %}
+                        <tr>
+                            <td>
+                                <span style="display:none;">{{ licencia.creado|date:'Y-m-d' }}</span>
+                                {{ licencia.creado|date:"Y-m-d" }}
+                            </td>
+                            <td>{{licencia.creada_por}}</td>
+                            <td>{{licencia.nombre_completo}}</td>
+                            <td>{{licencia.cedula}}</td>
+                            <td>{{licencia.empresa}}</td>
+                            <td>{{licencia.area}}</td>
+                            <td>{{licencia.fecha_inicio}}</td>
+                            <td>{{licencia.fecha_fin}}</td>
+                            <td>{{licencia.tipo_licencia}}</td>
+                            <td>{{licencia.motivo_licencia}}</td>
+                            <td>{{licencia.observacion_licencia}}</td>
+                            <td>{{licencia.nombre_coordinador}}</td>
+                            <td>
+                                {% if licencia.datos_adjuntos_licencias %}
+                                <a href="{% url 'mostrar_archivo_licencia' licencia.id %}" target="_blank">{{ licencia.nombre_archivo }}</a>
+                                {% else %}
+                                Sin archivo adjunto
+                                {% endif %}
+                            </td>
+                            <td>{{licencia.verificacion_licencia}}</td>
+                            <td>{{licencia.estado_licencia}}</td>
+                            <td>{{licencia.verificada_por}}</td>
+                            <td>{{licencia.fecha_verificacion}}</td>
+                            <td>{{licencia.aprobacion_rrhh}}</td>
+                            <td>{{licencia.observacion_rrhh}}</td>
+                            <td>{{licencia.verificacion_rrhh}}</td>
+                            <td>{{licencia.fecha_aprobacion}}</td>
+                            {% if es_admin or es_lider or es_coordinador or es_superusuario or es_BP %}
+                            <td>
+                                <a type="button" href="{% url 'update_licencia' licencia.id %}" class="btn btn-success" data-licencia-id="{{ licencia.id }}"><i class="bi bi-pencil"></i></a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/javascript.js' %}"></script>
+<script src="{% static 'js/licenciaEdit.js' %}"></script>
+
+{% endblock %}

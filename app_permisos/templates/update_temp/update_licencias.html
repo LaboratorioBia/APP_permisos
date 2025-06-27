@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Editar Licencias{% endblock %}
+{% block content %}
+
+<header id="header-prin-lic">
+    <nav id="header-vl">
+        <ul class="VL-header">
+            <a href="{% url 'ver licencias' %}" class="atras-vl btn btn-outline-danger">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </ul>
+    </nav>
+    <img src="{% static 'images/sinapsis_icono.ico' %}" class="logo">
+</header>
+
+<br>
+<div id="cabeza-form-licencias">
+    <h3 style="text-align: center;">Editar Licencia</h3>
+</div>
+
+<div class="pencil-icon-container">
+    <i class="bi bi-pencil-square"></i>
+</div>
+
+<div id="" class="mx-auto">
+    <div id="body-form" class="">
+        <div class="row col-sm-9 mx-auto">
+
+            <form method="post" enctype="multipart/form-data" id="licencia-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-3 form-group text-center fs-7">
+                        {{ form.cedula.label_tag }}
+                        {{ form.cedula }}
+                    </div>
+                    <div class="col-5 form-group text-center fs-7">
+                        {{ form.nombre_completo.label_tag }}
+                        {{ form.nombre_completo }}
+                    </div>
+                    <div class="col-4 form-group text-center fs-7">
+                        {{ form.area.label_tag }}
+                        {{ form.area }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 form-group text-center fs-7">
+                        {{ form.empresa.label_tag }}
+                    </div>
+                    <div class="col-md-3 form-group text-center fs-7">
+                        {{ form.fecha_inicio.label_tag }}
+                    </div>
+                    <div class="col-md-3 form-group text-center fs-7">
+                        {{ form.fecha_fin.label_tag }}
+                    </div>
+                    <div class="col-md-4 form-group text-center fs-7">
+                        {{ form.motivo_licencia.label_tag }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 form-group">
+                        {{ form.empresa }}
+                    </div>
+                    <div class="col-md-3 form-group">
+                        {{ form.fecha_inicio }}
+                    </div>
+                    <div class="col-md-3 form-group">
+                        {{ form.fecha_fin }}
+                    </div>
+                    <div class="col-md-4 form-group">
+                        {{ form.motivo_licencia }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 form-group text-center fs-7">
+                        {{ form.nombre_coordinador.label_tag }}
+                    </div>
+                    <div class="col-md-7 form-group text-center fs-7">
+                        {{ form.tipo_licencia.label_tag }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        {{ form.nombre_coordinador }}
+                    </div>
+                    <div class="col-md-6 form-group">
+                        {{ form.tipo_licencia }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.datos_adjuntos_licencias.label_tag }}
+                        {{ form.datos_adjuntos_licencias }}
+                    </div>
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.observacion_licencia.label_tag }}
+                        {{ form.observacion_licencia }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.verificacion_licencia.label_tag }}
+                        {{ form.verificacion_licencia }}
+                    </div>
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.aprobacion_rrhh.label_tag }}
+                        {{ form.aprobacion_rrhh }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.estado_licencia.label_tag }}
+                        {{ form.estado_licencia }}
+                    </div>
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.observacion_rrhh.label_tag }}
+                        {{ form.observacion_rrhh }}
+                    </div>
+                </div>
+
+                <div class="buttons-container">
+                    <input type="submit" value="Guardar Cambios" class="save-changes-button">
+                    <button id="cerrar-modal-edicion" class="close-button">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br>
+<br>
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        var checkbox = $('#datos_adjuntos_licencias-clear_id');
+        checkbox.detach();
+        $('label[for="datos_adjuntos_licencias-clear_id"]').after(checkbox);
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Almacena los valores originales de los campos deshabilitados
+        var originalValues = {};
+
+        // Guarda los valores originales al cargar la página
+        function saveOriginalValues() {
+            var disableEditFields = document.querySelectorAll('.disable-edit');
+            disableEditFields.forEach(function (field) {
+                originalValues[field.name] = field.value;
+            });
+        }
+
+        // Restaura los valores originales a los campos deshabilitados
+        function restoreOriginalValues() {
+            var disableEditFields = document.querySelectorAll('.disable-edit');
+            disableEditFields.forEach(function (field) {
+                field.value = originalValues[field.name];
+            });
+        }
+
+        // Llama a la función saveOriginalValues cuando se carga la página
+        saveOriginalValues();
+
+        // Agrega un evento al formulario para verificar campos deshabilitados antes de enviar
+        document.getElementById('licencia-form').addEventListener('submit', function (event) {
+            // Restaura los valores originales antes de enviar el formulario
+            restoreOriginalValues();
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

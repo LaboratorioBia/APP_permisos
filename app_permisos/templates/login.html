@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+
+<div class="container ">
+
+    <div id="login" class="mx-auto mt-5">
+        <div class="text-center">
+            <h2>Inicio de Sesión</h2>
+        </div>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <fieldset class="clearfix">
+
+                <p><span class="bi bi-person" style="color: white;"></span><input name="username" type="text" value="Username"
+                        onBlur="if(this.value == '') this.value = 'Username'"
+                        onFocus="if(this.value == 'Username') this.value = ''" required></p>
+                <p><span class="bi bi-key" style="color: white;"></span><input name="password" type="password" value="Password"
+                        onBlur="if(this.value == '') this.value = 'Password'"
+                        onFocus="if(this.value == 'Password') this.value = ''" required></p>
+                <p><input type="submit" value="Sign In"></p>
+
+            </fieldset>
+
+        </form>
+
+    </div> 
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Editar Permisos{% endblock %}
+{% block content %}
+
+<header id="header-prin-permis">
+    <nav id="header-vp">
+        <ul class="VP-header">
+            <a href="{% url 'ver permisos' %}" class="atras-vp btn btn-outline-danger">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </ul>
+    </nav>
+    <div>
+        <img src="{% static 'images/sinapsis_icono.ico' %}" class="logo">
+    </div>
+</header>
+
+<br>
+<div id="cabeza-form">
+    <h3 style="text-align: center;">Editar Permiso</h3>
+</div>
+
+<div class="pencil-icon-container">
+    <i class="bi bi-pencil-square"></i>
+</div>
+
+<div id="" class="mx-auto">
+    <div id="body-form" class="">
+        <div class="row col-sm-9 mx-auto">
+
+            <form method="post" enctype="multipart/form-data" id="permiso-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-3 form-group text-center fs-7">
+                        {{ form.cedula.label_tag }}
+                        {{ form.cedula }}
+                    </div>
+                    <div class="col-5 form-group text-center fs-7">
+                        {{ form.nombre_completo.label_tag }}
+                        {{ form.nombre_completo }}
+                    </div>
+                    <div class="col-4 form-group text-center fs-7">
+                        {{ form.area.label_tag }}
+                        {{ form.area }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 form-group text-center fs-7">
+                        {{ form.turno.label_tag }}
+                    </div>
+                    <div class="col-md-2 form-group text-center fs-7">
+                        {{ form.fecha_permiso.label_tag }}
+                    </div>
+                    <div class="col-md-2 form-group text-center fs-9">
+                        {{ form.fecha_fin_permiso.label_tag }}
+                    </div>
+                    <div class="col-md-3 form-group text-center fs-7">
+                        {{ form.hora_salida.label_tag }}
+                    </div>
+                    <div class="col-md-2 form-group text-center fs-7">
+                        {{ form.hora_llegada.label_tag }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 form-group">
+                        {{ form.turno }}
+                    </div>
+                    <div class="col-md-2 form-group">
+                        {{ form.fecha_permiso }}
+                    </div>
+                    <div class="col-md-2 form-group">
+                        {{ form.fecha_fin_permiso }}
+                    </div>
+                    <div class="col-md-3 form-group">
+                        {{ form.hora_salida }}
+                    </div>
+                    <div class="col-md-2 form-group">
+                        {{ form.hora_llegada }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 form-group text-center fs-10">
+                        {{ form.compensa_tiempo.label_tag }}
+                    </div>
+                    <div class="col-md-5 form-group text-center fs-8">
+                        {{ form.motivo_permiso.label_tag }}
+                    </div>
+                    <div class="col-md-5 form-group text-center fs-7">
+                        {{ form.nombre_coordinador.label_tag }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 form-group  text-center fs-9">
+                        {{ form.compensa_tiempo }}
+                    </div>
+                    <div class="col-md-5 form-group  text-center fs-7">
+                        {{ form.motivo_permiso }}
+                    </div>
+                    <div class="col-md-5 form-group  text-center fs-7">
+                        {{ form.nombre_coordinador }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-9 form-group text-center fs-7">
+                        {{ form.datos_adjuntos.label_tag }}
+                        {{ form.datos_adjuntos }}
+                    </div>
+
+                    <div class="col-md-3 form-group text-center fs-7">
+                        {{ form.verificacion.label_tag }}
+                        {{ form.verificacion }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.observacion.label_tag }}
+                        {{ form.observacion }}
+                    </div>
+
+                    <div class="col-md-6 form-group text-center fs-7">
+                        {{ form.estado.label_tag }}
+                        {{ form.estado }}
+                    </div>
+                </div>
+
+                <div class="buttons-container">
+                    <input type="submit" value="Guardar Cambios" class="save-changes-button">
+                    <button id="cerrar-modal-edicion" class="close-button">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        var checkbox = $('#datos_adjuntos-clear_id');
+        checkbox.detach();
+        $('label[for="datos_adjuntos-clear_id"]').after(checkbox);
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Almacena los valores originales de los campos deshabilitados
+        var originalValues = {};
+
+        // Guarda los valores originales al cargar la página
+        function saveOriginalValues() {
+            var disableEditFields = document.querySelectorAll('.disable-edit');
+            disableEditFields.forEach(function (field) {
+                originalValues[field.name] = field.value;
+            });
+        }
+
+        // Restaura los valores originales a los campos deshabilitados
+        function restoreOriginalValues() {
+            var disableEditFields = document.querySelectorAll('.disable-edit');
+            disableEditFields.forEach(function (field) {
+                field.value = originalValues[field.name];
+            });
+        }
+
+        // Llama a la función saveOriginalValues cuando se carga la página
+        saveOriginalValues();
+
+        // Agrega un evento al formulario para verificar campos deshabilitados antes de enviar
+        document.getElementById('permiso-form').addEventListener('submit', function (event) {
+            // Restaura los valores originales antes de enviar el formulario
+            restoreOriginalValues();
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

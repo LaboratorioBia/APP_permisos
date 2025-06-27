@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Detalles Permisos{% endblock %}
+{% block content %}
+
+<header id="header-prin-permis">
+    <nav id="header-vp">
+        <ul class="VP-header">
+            <a href="{% url 'ver permisos' %}" class="atras-vp btn btn-outline-danger">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+        </ul>
+    </nav>
+    <div>
+        <img src="{% static 'images/sinapsis_icono.ico' %}" class="logo">
+    </div>
+</header>
+
+<div id="encabezado-ver-permisos">
+    <h3 style="text-align: center;">Detalles de Permisos</h3>
+    <i id="check-permis" class="bi bi-bar-chart-line"></i>
+</div>
+
+<body id="body-graf" style="padding: 1em;">
+
+    <!-- Div del gráfico de paretos -->
+    <div class="card" style="width: 95%; margin: auto; margin-bottom: 20px; display: block; text-align: center;">
+        <div style="padding-top: 20px; display: flex; justify-content: space-between;">
+            <button id="toggleButton2" class="btn btn-outline-warning" style="margin-left: 10px; color: black;" onclick="actualizar_cantidad_permisos(this.value)">Cantidad Permisos</button>
+            <select id="selectArea" class="form-select" style="width: 120px; margin-right: 50px;" onchange="updateChartByArea(this.value)"></select>
+            <select id="selectDias" class="form-select" style="width: 120px; margin-right: 50px;"
+            onchange="updateChartByDays(this.value)"></select>
+            <select id="selectMes" class="form-select" style="width: 120px; margin-right: 50px;" onchange="updateChartByMonth(this.value)">
+                <option value="0">Todos</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+            <button id="toggleButton" class="btn btn-outline-warning" style="margin-right: 10px; color: black;" onclick="actualizar_permisos_chart_horas(this.value)">Horas Mensuales</button>
+        </div>
+        <div class="card-body" style="height: 400px; width: 90%; position: relative;">
+            <div id="chart-container" style="height: 100%; width: 120%; padding-right: 20%;"></div>
+        </div>
+    </div>
+
+    <!-- Div del gráfico de linea de tiempo -->
+    <div class="card" style="width: 95%; margin: auto; margin-bottom: 20px; display: block;">
+        <div class="card-body" style="height: 400px; width: 90%; position: relative;">
+            <div id="chart-container-mes" style="height: 100%; width: 115%; padding-right: 9%;"></div>
+        </div>
+    </div>
+
+    <!-- Cuadro para ver motivo de permiso mas frecuente de los operarios -->
+    <div class="card" style="width: 95%; margin: auto; margin-bottom: 20px; display: block;">
+        <div class="table table-responsive">
+            <div class="container-cantidad-permisos table-responsive pt-4">
+                <h5 style="font-weight: bold;" class="text-center">Frecuencia de motivos por operarios</h4>
+                <table class="table-fill table table-striped table-bordered table-responsive mx-auto">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Nombre Completo</th>
+                            <th class="text-left">Motivo Del Permiso</th>
+                            <th class="text-left">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="datos-permisos-body" class="table-hover">
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"></td>
+                            <td class="text-left"></td>
+                            <td class="text-lef"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<!-- Script para obtener el nombre de las areas y actualizar el grafico con el area seleccionada-->
+<script>
+    /**
+     * Este script se encarga de obtener las áreas desde el servidor y actualizar un gráfico de pareto
+     * basado en el área seleccionada por el usuario.
+     *
+     * Funcionalidades principales:
+     * 1. Obtener y poblar un elemento select con las áreas disponibles.
+     * 2. Escuchar cambios en el select para actualizar el gráfico según el área seleccionada.
+     * 3. Realizar solicitudes asíncronas para obtener y actualizar los datos del gráfico.
+     * 
+     */
+    $(document).ready(function() {
+        $.ajax({
+            url: '/get_areas/',
+            method: 'GET',
+            success: function(data) {
+                var selectArea = $('#selectArea');
+                selectArea.empty(); 
+                
+                selectArea.append(new Option('Todos', 'all'));
+                data.forEach(function(area) {
+                    selectArea.append(new Option(area.name, area.id)); 
+                });
+            },
+            error: function(error) {
+                console.log("Error al obtener las áreas: ", error);
+            }
+        });
+
+        $('#selectArea').change(function(){
+            var selectedArea = $(this).val();
+            updateChartByArea(selectedArea);
+        });
+    });
+
+    /**
+     * Función asíncrona para actualizar el gráfico basado en el área seleccionada.
+     * @param {String} areaValue - El valor del área seleccionada.
+     */
+    async function updateChartByArea(areaValue){
+        var url = '/actualizar_permisos_chart_area/' + areaValue + '/';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data && data.permisos && data.motivo_permisos && data.cantidad_permisos && data.porcentaje_acumulado){
+                var new_data = grafico_permiso(data.motivo_permisos, data.cantidad_permisos, data.porcentaje_acumulado, 'Cantidad de Permisos');
+                myChart.setOption(new_data);
+            } else{
+                console.error("Los datos recibidos de la vista están incompletos");
+            }
+        } catch (error){
+            console.error("Error al obtener los datos de la vista", error);
+        }
+    }
+</script>
+
+<!-- Script para actualizar el grafico con el dia-mes-año seleccionado -->
+<script>
+    /**
+     * Este script se encarga de obtener los días desde el servidor y actualizar el gráfico de pareto
+     * basado en el día seleccionado por el usuario.
+     *
+     * Funcionalidades principales:
+     * 1. Obtener y poblar un elemento select con los días disponibles.
+     * 2. Escuchar cambios en el select para actualizar el gráfico según el día seleccionado.
+     * 3. Realizar solicitudes asíncronas para obtener y actualizar los datos del gráfico.
+     * 
+     */
+    $(document).ready(function(){
+        $.ajax({
+            url: '/get_days/',
+            method: 'GET',
+            success: function(data){
+                var selectDay = $('#selectDias');
+                selectDay.empty();
+
+                selectDay.append(new Option('Todos', 'all'));
+                data.fechas.forEach(function(day){
+                    selectDay.append(new Option(day, day));
+                });
+            },
+            error: function(error){
+                console.log("Error al obtener los dias: ", error);
+            }
+        });
+
+        $('#selectDias').change(function(){
+            var selectedDay = $(this).val();
+            updateChartByDays(selectedDay);
+        });
+    });
+
+    /**
+     * Función asíncrona para actualizar el gráfico basado en el día seleccionado.
+     * @param {String} daysValue - El valor del día seleccionado.
+     */
+    async function updateChartByDays(daysValue){
+        var url = '/actualizar_permisos_chart_dias/' + daysValue + '/';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data && data.permisos && data.motivo_permisos && data.cantidad_permisos && data.porcentaje_acumulado){
+                var new_data = grafico_permiso(data.motivo_permisos, data.cantidad_permisos, data.porcentaje_acumulado, 'Cantidad de Permisos');
+                myChart.setOption(new_data);
+            } else{
+                console.error("Los datos recibidos de la vista están incompletos");
+            }
+        } catch (error){
+            console.error("Error al obtener los datos de la vista", error);
+        }
+    }
+</script>
+
+<!-- Script para el cuadro -->
+<script>
+    /**
+     * Este script se encarga de realizar una solicitud AJAX para obtener datos de permisos
+     * y llena la tabla de permisos por operario con esos datos cuando la página se carga.
+     *
+     * Funcionalidades principales:
+     * 1. Realizar una solicitud AJAX a una URL específica para obtener datos de permisos.
+     * 2. Vaciar el cuerpo de la tabla antes de llenarlo con nuevos datos.
+     * 3. Iterar sobre los datos recibidos y agregar filas a la tabla con la información de permisos.
+     */
+    $(document).ready(function(){
+        $.ajax({
+            url: "{% url 'chart_cant_permisos' %}",
+            type: 'GET',
+            success: function(response){
+                var data = response.Per;
+                var tbody = $('#datos-permisos-body');
+                tbody.empty();
+                data.forEach(function(row){
+                    var tr = $('<tr>');
+                    tr.append('<td>' + row.nombre_completo + '</td>');
+                    tr.append('<td>' + row.motivo_permiso + '</td>');
+                    tr.append('<td>' + row.cantidad + '</td>');
+                    tbody.append(tr);
+                });
+            }
+        });
+    });
+</script>
+
+<!-- Gráfico de paretos -->
+<script>
+    /**
+     * Este script se encarga de configurar y mostrar un gráfico de Pareto para los tipos de permisos
+     * utilizando la biblioteca de gráficos ECharts. El gráfico se carga cuando el documento está listo.
+     *
+     * Funcionalidades principales:
+     * 1. Definición de la función 'grafico_permiso' para configurar las opciones del gráfico.
+     * 2. Almacenar datos de respaldo de los permisos y porcentajes acumulados.
+     * 3. Inicializar el gráfico de Pareto con los datos recibidos.
+     */
+    let tiposDataDefault_backup;
+    let permisosDataDefault_backup;
+    let porcentajes_acumulados_backup;
+
+    /**
+     * Genera la configuración inicial del gráfico de Pareto para los tipos de permisos.
+     *
+     * @param {Array} tiposDataDefault - Datos de los tipos de permisos.
+     * @param {Array} permisosDataDefault - Datos de la cantidad de permisos.
+     * @param {Array} porcentajes_acumulados - Datos del porcentaje acumulado.
+     * @param {string} namebar - Nombre de la barra en el gráfico.
+     * @returns {Object} initialOption - Configuración inicial del gráfico de Pareto.
+     */
+    function grafico_permiso(tiposDataDefault, permisosDataDefault, porcentajes_acumulados, namebar){
+        initialOption = {
+            title: {
+                text: 'Gráfico de Pareto - Tipos de Permisos',
+                left: 'center',
+                top: '10%',
+                textStyle: {
+                    fontSize: '14'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow',
+                },
+            },
+            legend: {
+                data: [namebar, 'Porcentaje Acumulado'],
+            },
+            xAxis: {
+                type: 'category',
+                data: tiposDataDefault,
+            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: namebar,
+                    axisLabel: {
+                        formatter: '{value}',
+                    },
+                },
+                {
+                    type: 'value',
+                    name: 'Porcentaje Acumulado',
+                    axisLabel: {
+                        formatter: '{value} %',
+                    },
+                    position: 'right',
+                    offset: 50,
+                    splitNumber: 5,
+                    splitLine: {
+                        show: false,
+                    },
+                },
+            ],
+            series: [
+                {
+                    name: namebar,
+                    type: 'bar',
+                    data: permisosDataDefault,
+                },
+                {
+                    name: 'Porcentaje Acumulado',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    data: porcentajes_acumulados,
+                },
+            ],
+        };
+        return initialOption
+    }
+
+    /**
+     * Evento que se ejecuta cuando el contenido del DOM se ha cargado completamente.
+     * Inicializa el gráfico de Pareto con los datos de permisos.
+     */
+    document.addEventListener('DOMContentLoaded', function () {
+        var myChart;
+        var initialOption;  
+
+        var tipos_permisos = JSON.parse('{{ tipos_permisos|safe }}');
+        var permisosDataDefault = tipos_permisos.map(function (tipo) {
+            return tipo.count;
+        });
+        permisosDataDefault_backup = permisosDataDefault;
+
+        var porcentajes_acumulados = JSON.parse('{{ porcentajes_acumulados|safe }}');
+        porcentajes_acumulados_backup = porcentajes_acumulados;
+
+        var tiposDataDefault = tipos_permisos.map(function (tipo) {
+            return tipo.nombre;
+        });
+        tiposDataDefault_backup = tiposDataDefault;
+
+        myChart = echarts.init(document.getElementById('chart-container'));
+
+        var info = grafico_permiso(tiposDataDefault, permisosDataDefault, porcentajes_acumulados, 'Cantidad de Permisos');
+        myChart.setOption(info);
+
+    });
+</script>
+
+<!-- Script para actualizar el grafico con el mes seleccionado -->
+<script>
+    /**
+     * Este script se encarga de configurar y actualizar un gráfico de pareto a partir de permisos mensuales.
+     * El gráfico se actualiza cuando se selecciona un nuevo mes.
+     *
+     * Funcionalidades principales:
+     * 1. Inicialización del gráfico en el contenedor especificado.
+     * 2. Definición de la función `getOptionChart` para obtener los datos del gráfico de una URL específica.
+     * 3. Definición de la función `updateChartByMonth` para actualizar el gráfico con nuevos datos basados en el mes seleccionado.
+     * 
+     */
+    var myChart = echarts.init(document.getElementById('chart-container'));
+
+    const getOptionChart = async(mes) => {
+        try{
+            const response = await fetch(`/actualizar_permisos_chart/${mes}/`);
+            return await response.json();
+        } catch (ex){
+            alert(ex);
+        }
+    };
+
+    /**
+     * Actualiza el gráfico de pareto de permisos con datos basados en el mes seleccionado.
+     * Realiza una solicitud HTTP GET a la URL específica del mes (La vista donde hace los calculos), y luego 
+     * actualiza el gráfico con los datos recibidos.
+     *
+     * @param {string} monthValue - El valor del mes seleccionado.
+     */
+    async function updateChartByMonth(monthValue){
+        var url = '/actualizar_permisos_chart/' + monthValue + '/';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data && data.permisos && data.motivo_permisos && data.cantidad_permisos && data.porcentaje_acumulado){
+                var new_data = grafico_permiso(data.motivo_permisos, data.cantidad_permisos, data.porcentaje_acumulado, 'Cantidad de Permisos');
+                myChart.setOption(new_data);
+            } else{
+                console.error("Los datos recibidos de la vista estan incompletos");
+            }
+        } catch (error){
+            console.error("Error al obtener los datos de la vista");
+        }
+    }
+</script>
+
+<!-- Script para funcionalidad del botón Horas Mensuales -->
+<script>
+    /**
+     * Función asincrónica para actualizar el gráfico de permisos por horas mensuales.
+     * Realiza una solicitud fetch para obtener los datos desde el servidor y actualiza el gráfico en consecuencia.
+     */
+        async function actualizar_permisos_chart_horas(){
+        var url = '/actualizar_permisos_chart_horas/';
+        try{
+            const response = await fetch(url);
+
+            const data = await response.json();
+
+            if (data && data.motivos_permisos && data.horas_mensuales && data.porcentaje_acumulado){
+                var newdata = grafico_permiso(data.motivos_permisos, data.horas_mensuales, data.porcentaje_acumulado, 'Horas Mensuales');
+                myChart.setOption(newdata)
+            } else {
+                console.error("Los datos recibidos de la vista esta incompletos.");
+            }
+        } catch (error) {
+            console.error("Error al obtener datos de la vista:", error);
+        }
+    }
+</script>
+
+<!-- Script para funcionalidad del botón Cantidad de Licencias -->
+<script>
+    /**
+     * Función para actualizar el gráfico de pareto con la de cantidad de permisos.
+     * Comprueba la disponibilidad de datos de respaldo y actualiza el gráfico si están completos.
+     * Si falta algún dato de respaldo, registra un error en la consola.
+     */
+    function actualizar_cantidad_permisos(){
+        if (tiposDataDefault_backup && permisosDataDefault_backup && porcentajes_acumulados_backup){
+                var newdata = grafico_permiso(tiposDataDefault_backup, permisosDataDefault_backup, porcentajes_acumulados_backup, 'Cantidad de Permisos');
+                myChart.setOption(newdata)
+            } else {
+                console.error("Los datos recibidos de la vista esta incompletos.");
+            }
+    }
+</script>
+
+<!-- Gráfico linea de tiempo de permisos -->
+<script>
+    /**
+     * Función para generar la configuración del gráfico de línea y barras para permisos y horas mensuales.
+     * @param {Array} months - Arreglo de meses para el eje X del gráfico.
+     * @param {Array} counts - Arreglo de cantidades de permisos para el eje Y principal (izquierda).
+     * @param {Array} hoursMonthlyTrue - Arreglo de horas mensuales para el eje Y secundario (derecha).
+     * @returns {Object} Configuración inicial del gráfico.
+     */
+    function timeline_grafic(months, counts, hoursMonthlyTrue) {
+        optionMes = {
+            title: {
+                text: 'Permisos y Horas Mensuales',
+                left: 'center',
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow',
+                },
+            },
+            xAxis: {
+                type: 'category',
+                data: months,
+            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'Cantidad de Permisos',
+                },
+                {
+                    type: 'value',
+                    name: 'Horas Mensuales',
+                }
+            ],
+            grid: {
+                right: '16%',  
+                left: '16%',
+            },
+            series: [
+                {
+                    name: 'Cantidad de Permisos',
+                    data: counts,
+                    type: 'line',
+                    yAxisIndex: 0,
+                },
+                {
+                    name: 'Horas Mensuales',
+                    data: hoursMonthlyTrue,
+                    type: 'bar',
+                    yAxisIndex: 1,
+                }
+            ],
+        };
+        return optionMes;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var myChartMes;
+        var optionMes; 
+        var url = '/timeline_permiso_chart/';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var months = data.month.map(item => item.month);
+                var counts = data.month.map(item => item.count);
+                var hoursMonthlyTrue = data.horas_mensuales_vedaderas;
+
+                myChartMes = echarts.init(document.getElementById('chart-container-mes'));
+
+                var info = timeline_grafic(months, counts, hoursMonthlyTrue);
+                myChartMes.setOption(info);
+            });
+    });
+</script>
+
+{% endblock %}
