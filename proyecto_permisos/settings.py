@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+
 import environ
 from pathlib import Path
 import os
@@ -34,47 +35,47 @@ DEBUG = True
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # 'app_permisos',
-    'import_export'
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "app_permisos",
+    "import_export",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'proyecto_permisos.urls'
+ROOT_URLCONF = "proyecto_permisos.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
         # 'DIRS': [],
-        'DIRS': [
-            os.path.join(BASE_DIR, 'app_permisos/templates'),
-            os.path.join(BASE_DIR, 'app_permisos/templates/modules'),
-            os.path.join(BASE_DIR, 'app_permisos/templates/update_temp'),
-            os.path.join(BASE_DIR, 'app_permisos/templates/visualizacion'),
+        "DIRS": [
+            os.path.join(BASE_DIR, "app_permisos/templates"),
+            os.path.join(BASE_DIR, "app_permisos/templates/modules"),
+            os.path.join(BASE_DIR, "app_permisos/templates/update_temp"),
+            os.path.join(BASE_DIR, "app_permisos/templates/visualizacion"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-            'autoescape': False,
+            "autoescape": False,
         },
     },
 ]
@@ -85,34 +86,34 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE':'mssql',
-            'NAME': env.str("SQL_NAME_DATABASE2"),
-            'USER': env.str("SQL_USER_DATABASE"),
-            'PASSWORD':env.str("SQL_PASSWORD_DATABASE"),
-            'HOST':env.str("SQL_HOST"),
-            'PORT':'',
-            'OPTIONS':{
-                'driver': 'ODBC Driver 17 for SQL Server',
-            }
-        }
-    } 
+    "default": {
+        "ENGINE": "mssql",
+        "NAME": env.str("SQL_NAME_DATABASE2"),
+        "USER": env.str("SQL_USER_DATABASE"),
+        "PASSWORD": env.str("SQL_PASSWORD_DATABASE"),
+        "HOST": env.str("SQL_HOST"),
+        "PORT": "",
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -120,11 +121,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'es'
+LANGUAGE_CODE = "es"
 
-DATE_INPUT_FORMATS = ['%d/%m/%Y']
+DATE_INPUT_FORMATS = ["%d/%m/%Y"]
 
-TIME_ZONE = 'America/Bogota'
+TIME_ZONE = "America/Bogota"
 
 USE_I18N = True
 
@@ -134,33 +135,33 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "proyecto_permisos/static")]
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-#MEDIA
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-#Static
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# Static
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-AUTH_USER_MODEL = 'app_permisos.CustomUser'
+AUTH_USER_MODEL = "app_permisos.CustomUser"
 
-#LOGIN
-LOGIN_URL = reverse_lazy('login')
-LOGIN_REDIRECT_URL = reverse_lazy('inicio')
+# LOGIN
+LOGIN_URL = reverse_lazy("login")
+LOGIN_REDIRECT_URL = reverse_lazy("inicio")
 
-#ENVIO DE CORREOS
+# ENVIO DE CORREOS
 # Configuración para enviar correos a través de Outlook
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Usar el backend SMTP
-EMAIL_HOST = 'smtp.office365.com'  # Servidor SMTP de Outlook
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"  # Usar el backend SMTP
+EMAIL_HOST = "smtp.office365.com"  # Servidor SMTP de Outlook
 EMAIL_PORT = 587  # Puerto SMTP para Outlook con TLS
 # print(env.str("EMAIL_PRAC"))
 # print(env.str("PASS_PRAC"))
@@ -173,4 +174,4 @@ EMAIL_SSL_CERTFILE = None
 
 
 # Configuración adicional
-DEFAULT_FROM_EMAIL =  env.str("EMAIL_PRAC")
+DEFAULT_FROM_EMAIL = env.str("EMAIL_PRAC")

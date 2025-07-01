@@ -26,6 +26,10 @@
 <div id="botones-crear" class="botones-crear">
     <button id="crear-permiso" class="crear-permiso btn btn-outline-success" {% if es_coordinador or es_admin or es_BP %}disabled{% endif %}>Crear Permiso</button>
     <button id="crear-licencia" class="crear-licencias btn btn-outline-success" {% if es_lider or es_admin or es_BP %}disabled{% endif %} >Crear Licencia</button>
+    <a class="button btn btn-outline-success" href="{% url 'resumen' %}">
+                    <i class="bi bi-card-checklist fs-5"></i>
+                    Resumen Licencias
+                </a>
 </div>
 
 <br>
