@@ -29,8 +29,8 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [env.str("ALLOWED_HOSTS")]
-# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = [env.str("ALLOWED_HOSTS")]
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -178,6 +178,9 @@ EMAIL_HOST_USER = env.str("EMAIL_PRAC")
 EMAIL_HOST_PASSWORD = env.str("PASS_PRAC")  # Contraseña de tu cuenta de Outlook
 EMAIL_USE_TLS = True  # Usar TLS para la conexión segura con Outlook
 EMAIL_USE_SSL = False  # No usar SSL (SSL es diferente de TLS)
+EMAIL_SSL_KEYFILE = None
+EMAIL_SSL_CERTFILE = None
+
 
 # Configuración adicional
 DEFAULT_FROM_EMAIL =  env.str("EMAIL_PRAC")

@@ -15,7 +15,7 @@ def conection_elemental():
     return conection
 
 def conection_house():
-    variables = os.environ.get("CON_HOUSE").split(",")
+    # variables = os.environ.get("CON_HOUSE").split(",")
     conection = sqlalchemy.create_engine(
         "mssql+pyodbc://%s:%s@%s/%s?driver=%s" 
         # % (variables[0], variables[1], variables[2], variables[3], variables[4]))

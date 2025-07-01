@@ -17,5 +17,5 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'proyecto_permisos.settings')
 # application = get_wsgi_application()
 
 application = Cling(get_wsgi_application())
-serve(application, host='0.0.0.0', port=8081)
+# serve(application, host='0.0.0.0', port=8081)
 #waitress-serve proyecto_permisos.wsgi:application

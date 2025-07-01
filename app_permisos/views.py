@@ -228,6 +228,8 @@ class Inicio(LoginRequiredMixin,TemplateView):
                 admins_grupo = Group.objects.get(name='Admin')
                 admins = CustomUser.objects.filter(groups=admins_grupo)
 
+                print("Revisando coordinadores",coordinadores)
+
                 recipient_list = [coordinador.email for coordinador in coordinadores] + [admin.email for admin in admins]
 
                 if recipient_list:
@@ -316,10 +318,11 @@ class Inicio(LoginRequiredMixin,TemplateView):
                 # Crear una versión de texto plano del mensaje
                 plain_message = strip_tags(html_message)
 
+                print("Proximo a enviar el correo 111 _________________________******************")
                 send_mail(
                     subject='NOTIFICACION DE LICENCIA',
                     message=plain_message,
-                    from_email=None,
+                    from_email='jimmy.bustamante@prebel.com.co',
                     recipient_list=recipient_lista,
                     html_message=html_message,
                     fail_silently=False,
@@ -345,11 +348,12 @@ class Inicio(LoginRequiredMixin,TemplateView):
                     # Crear una versión de texto plano del mensaje
                     plain_message = strip_tags(html_message)
 
+                    print("Proximo a enviar el correo 222 _________________________******************")
                     send_mail(
                         subject='NOTIFICACION DE LICENCIA MAYOR A DOS DIAS',
                         message=plain_message,
-                        from_email=None,
-                        recipient_list=['prac.ingindustrial@prebel.com.co'],
+                        from_email='jimmy.bustamante@prebel.com.co',
+                        recipient_list=['jimmy.bustamante@prebel.com.co'],
                         html_message=html_message,
                         fail_silently=False,
                     )       
@@ -413,7 +417,7 @@ def consulta_sql_marcaciones():
     """),con)
     con.close()
 
-    # print(df)
+    print("Revisando que vengan datos",df)
 
     return df
 
@@ -450,6 +454,7 @@ class ObtenerNombre(View):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             cedula = request.GET.get("cedula")
 
+            print("Cedula Llego",cedula)
             if cedula:
                 df_empleados = consulta_sql_marcaciones()
                 # print(df_empleados)
@@ -2351,7 +2356,7 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
                     subject='NOTIFICACION DE LICENCIA: RECHAZADA POR GESTIÓN HUMANA',
                     message=plain_message,
                     from_email=None,
-                    recipient_list=['prac.ingindustrial@prebel.com.co'],
+                    recipient_list=['jimmy.bustamante@prebel.com.co'],
                     html_message=html_message,
                     fail_silently=False,
                 )
@@ -2381,7 +2386,8 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
                 subject='NOTIFICACION DE LICENCIA RECHAZADA',
                 message=plain_message,
                 from_email=None,
-                recipient_list=['sara.pena@prebel.com.co', 'diego.gallego@prebel.com.co'],
+                # recipient_list=['sara.pena@prebel.com.co', 'diego.gallego@prebel.com.co'],
+                recipient_list=['jimmy.bustamante@prebel.com.co'],
                 html_message=html_message,
                 fail_silently=False,
             )
