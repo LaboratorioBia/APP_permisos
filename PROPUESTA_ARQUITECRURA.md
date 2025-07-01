@@ -37,6 +37,7 @@ APP_PERMISOS/
 ├── manage.py
 ├── .gitignore
 └── requirements.txt
+```
 
 ---
 
