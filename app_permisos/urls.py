@@ -30,6 +30,7 @@ urlpatterns = [
     path('actualizar_tabla_areas/<str:area_id>/', GestionPermisos.actualizar_tabla_areas, name='actualizar_tabla_areas'),
 
     #Licencias
+    path('resumen', ResumenLicencias.as_view(), name='crear licencia'),
     path('ver_licencias',GestionLicencias.as_view(), name='ver licencias'),
     path('ver_licencias/mostrar_archivo_licencia/<int:id_licencia>/', GestionLicencias.as_view(), name='mostrar_archivo_licencia'),
     path('update_licencia/<int:pk>/', ActualizarLicencia.as_view(), name='update_licencia'),

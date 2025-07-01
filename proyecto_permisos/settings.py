@@ -30,7 +30,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = True
 
 # ALLOWED_HOSTS = [env.str("ALLOWED_HOSTS")]
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'app_permisos',
+    'app_permisos',
     'import_export'
 ]
 
@@ -162,8 +162,8 @@ LOGIN_REDIRECT_URL = reverse_lazy('inicio')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Usar el backend SMTP
 EMAIL_HOST = 'smtp.office365.com'  # Servidor SMTP de Outlook
 EMAIL_PORT = 587  # Puerto SMTP para Outlook con TLS
-# print(env.str("EMAIL_PRAC"))
-# print(env.str("PASS_PRAC"))
+print(env.str("EMAIL_PRAC"))
+print(env.str("PASS_PRAC"))
 EMAIL_HOST_USER = env.str("EMAIL_PRAC")
 EMAIL_HOST_PASSWORD = env.str("PASS_PRAC")  # Contraseña de tu cuenta de Outlook
 EMAIL_USE_TLS = True  # Usar TLS para la conexión segura con Outlook

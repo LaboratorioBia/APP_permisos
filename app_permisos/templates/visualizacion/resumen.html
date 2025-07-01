@@ -1,0 +1,33 @@
+{% load static %}
+<table
+  id="tabla-licencias"
+  class="table table-striped table-bordered table-responsive"
+>
+  <thead class="thead-dark">
+    <tr>
+      <th>Nombre Completo</th>
+      <th>Cédula</th>
+      <th>Área</th>
+      <th>Fecha Inicio</th>
+      <th>Fecha Fin</th>
+      <th>Motivo</th>
+      <th>Estado</th>
+      <th>Creado Por</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for licencia in lista_licencias %}
+    <tr>
+      <td>{{ licencia.nombre_completo }}</td>
+      <td>{{ licencia.cedula }}</td>
+      <td>{{ licencia.area.nombre_area }}</td>
+      <td>{{ licencia.fecha_permiso|default:licencia.fecha_inicio }}</td>
+      <td>{{ licencia.fecha_fin_permiso|default:licencia.fecha_fin }}</td>
+      <td>{{ licencia.motivo_licencia.name_motivo_licencia }}</td>
+      <td>{{ licencia.verificacion_licencia }}</td>
+      <td>{{ licencia.creada_por.username }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

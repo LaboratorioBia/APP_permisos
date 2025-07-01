@@ -2296,7 +2296,7 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
         kwargs['user'] = self.request.user
         kwargs['editing'] = True
         return kwargs
-    
+
     def form_valid(self, form):
         """
         Procesa el formulario después de una validación exitosa.
@@ -2395,3 +2395,233 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
         response = super().form_valid(form)
         print("Form successfully processed")
         return response
+    
+class ResumenLicencias(LoginRequiredMixin, TemplateView):
+    """
+    Vista para gestionar licencias de empleados.
+
+    Atributos:
+        - template_name (str): Nombre del template utilizado para renderizar la página de gestión de licencias.
+
+    Metodos:
+        - get_context_data(**kwargs): Obtiene y devuelve el contexto para renderizar la página.
+        - dispatch(request, *args, **kwargs): Controla la dirección de la solicitud según los parámetros.
+        - post(request, *args, **kwargs): Procesa los datos enviados mediante el formulario en la página.
+        - mostrar_archivo_licencia(request, id_licencia): Muestra el archivo adjunto correspondiente a una licencia.
+
+    Notas:
+        - Hereda de LoginRequiredMixin para asegurar que solo los usuarios autenticados pueden acceder a la página de gestión de licencias.
+        - Utiliza el atributo 'template_name' para especificar el template a utilizar.
+
+    Modo de uso:
+        - Accede a esta vista para gestionar y visualizar las licencias de los empleados.
+    """
+    template_name = 'resumen.html'
+
+    @staticmethod
+    def actualizar_tabla_licencias_areas(request, area_id):
+        """
+        Vista que devuelve un JSON con los detalles de las licencias filtradas por área específica o todas las áreas.
+
+        Args:
+            request (HttpRequest): La solicitud HTTP recibida por la vista.
+            area_id (str): El ID del área para filtrar las licencias. Use 'all' para incluir todas las áreas.
+
+        Returns:
+            JsonResponse: Un objeto JSON que contiene una lista de diccionarios con detalles de las licencias filtradas.
+
+        Funcionamiento:
+            1. Si area_id es 'all', obtiene todas las instancias de Licencia desde la base de datos ordenadas por fecha de creación. De lo contrario, filtra las licencias por el área especificada y las ordena por fecha de creación.
+            2. Crea una lista de diccionarios con los datos de las licencias, incluyendo detalles como fechas, área, empresa, tipo de licencia, motivo, observaciones, estado y enlaces para editar.
+            3. Retorna un JsonResponse con los datos estructurados de las licencias filtradas.
+            4. Maneja las excepciones relacionadas con áreas no existentes y cualquier otro error, devolviendo un JsonResponse con el error.
+        """
+        try:
+            if area_id == 'all':
+                licencias = Licencia.objects.all().order_by('-creado')
+                print(f"Licencias para todas las áreas: {[licencia.id for licencia in licencias]}")
+            else:
+                area = Area.objects.get(id=area_id)
+                licencias = Licencia.objects.filter(area=area).order_by('-creado')
+                print(f"Licencias para el área {area_id} ({area.nombre_area}): {[licencia.id for licencia in licencias]}")
+
+            licencias_data = []
+
+            for licencia in licencias:
+                licencias_data.append({
+                    'creado': licencia.creado.strftime('%Y-%m-%d'),
+                    'nombre_completo': licencia.nombre_completo,
+                    'cedula': licencia.cedula,
+                    'area': licencia.area.nombre_area,
+                    'empresa': licencia.empresa.name_empresa,
+                    'fecha_inicio': licencia.fecha_inicio.strftime('%Y-%m-%d'),
+                    'fecha_fin': licencia.fecha_fin.strftime('%Y-%m-%d'),
+                    'tipo_licencia': licencia.tipo_licencia.name_tipo_licencia,
+                    'motivo_licencia': licencia.motivo_licencia.name_motivo_licencia,
+                    'observacion_licencia': licencia.observacion_licencia,
+                    'nombre_coordinador': licencia.nombre_coordinador,
+                    'datos_adjuntos_licencias': licencia.datos_adjuntos_licencias.url if licencia.datos_adjuntos_licencias else '',
+                    'creada_por': licencia.creada_por.username,
+                    'verificacion_licencia': licencia.verificacion_licencia,
+                    'estado_licencia': licencia.estado_licencia,
+                    'verificada_por': licencia.verificada_por.username if licencia.verificada_por else '',
+                    'aprobacion_rrhh': licencia.aprobacion_rrhh,
+                    'observacion_rrhh': licencia.observacion_rrhh,
+                    'verificacion_rrhh': licencia.verificacion_rrhh.username if licencia.verificacion_rrhh else '',
+                    'fecha_verificacion': licencia.fecha_verificacion.strftime('%Y-%m-%d') if licencia.fecha_verificacion else '',
+                    'fecha_aprobacion': licencia.fecha_aprobacion.strftime('%Y-%m-%d') if licencia.fecha_aprobacion else '',
+                    'edit_url': reverse('update_licencia', args=[licencia.id]) 
+                })
+
+            return JsonResponse({'licencias': licencias_data})
+
+        except Area.DoesNotExist:
+            return JsonResponse({'error': f'Area with id {area_id} does not exist.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    def get_context_data(self, **kwargs):
+        """
+        Obtiene y devuelve el contexto para renderizar la página.
+
+        Return:
+            - dict: Un diccionario con datos para renderizar la página.
+
+        Notas:
+            - Verifica si el usuario es coordinador, Gestión Humana u otro, y filtra la lista de licencias en consecuencia.
+
+        Modo de uso:
+            - Este método se llama automáticamente al acceder a la página de gestión de licencias.
+        """
+        contexto = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        es_superusuario = user.groups.filter(name='SuperUser').exists()
+
+        if es_superusuario:
+        # Si el usuario es superusuario, se le muestran todos los permisos
+            contexto['lista_licencias'] = Licencia.objects.all()
+        else:
+            area = user.customuser.area if hasattr(user, 'customuser') and user.customuser else None
+
+            # print(f"Nombre de usuario: {user.username}")
+            # print(f"Área del area: {user.area}")
+            # print(f"Grupos de permisos: {user.groups.all()}")
+
+            es_coordinador = user.groups.filter(name='Coordinadores').exists()
+            es_admin = user.groups.filter(name='Admin').exists()
+            es_BP = user.groups.filter(name='BP').exists()
+
+            if es_admin or es_BP:
+                contexto['lista_licencias'] = Licencia.objects.all()
+            elif area:
+                # Si hay un área, filtra los permisos por esa área
+                contexto['lista_licencias'] = Licencia.objects.filter(area=area)
+            else:
+                area = user.area
+                contexto['lista_licencias'] = Licencia.objects.filter(area=area)
+            
+        grupo_coordinadores = Group.objects.get(name='Coordinadores')
+        es_coordinador = grupo_coordinadores in user.groups.all()
+
+        grupo_admin = Group.objects.get(name='Admin')
+        es_admin = grupo_admin in user.groups.all()
+
+        grupo_BP = Group.objects.get(name='BP')
+        es_BP = grupo_BP in user.groups.all()
+
+        contexto['es_coordinador'] = es_coordinador
+        contexto['es_admin'] = es_admin
+        contexto['es_superusuario'] = es_superusuario
+        contexto['es_BP'] = es_BP
+        return contexto
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Controla la dirección de la solicitud según los parámetros.
+
+        Args:
+            - request (HttpRequest): Objeto que contiene la información de la solicitud HTTP.
+            - args: Argumentos adicionales.
+            - kwargs: Argumentos clave adicionales.
+
+        Return:
+            - HttpResponse: Respuesta HTTP después de procesar la solicitud.
+
+        Notas:
+            - Si se proporciona 'id_licencia' en los parámetros, llama al método 'mostrar_archivo_licencia'.
+            - De lo contrario, llama al método 'dispatch' de la clase base.
+
+        Modo de uso:
+            - Este método se llama automáticamente al procesar una solicitud.
+        """
+        if 'id_licencia' in kwargs:
+            return self.mostrar_archivo_licencia(request, kwargs['id_licencia'])
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Procesa los datos enviados mediante el formulario en la página.
+
+        Args:
+            - request (HttpRequest): Objeto que contiene la información de la solicitud HTTP.
+            - args: Argumentos adicionales.
+            - kwargs: Argumentos clave adicionales.
+
+        Return:
+            - HttpResponse: Respuesta HTTP después de procesar los datos del formulario.
+
+        Notas:
+            - Procesa el formulario de licencias y guarda la información si es válido.
+
+        Modo de uso:
+            - Este método se llama automáticamente al enviar datos mediante el formulario.
+        """
+        form = LicenciaForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('inicio')
+        else:
+            return render(request, self.template_name, {'form':form})
+
+    def mostrar_archivo_licencia(self, request, id_licencia):
+        """
+        Muestra el archivo adjunto correspondiente a una licencia.
+
+        Args:
+            - request (HttpRequest): Objeto que contiene la información de la solicitud HTTP.
+            - id_licencia (int): ID de la licencia para la cual se muestra el archivo adjunto.
+
+        Return:
+            - HttpResponse: Respuesta HTTP que muestra el archivo adjunto.
+
+        Notas:
+            - Verifica el tipo de archivo y muestra el contenido si es compatible.
+
+        Modo de uso:
+            - Este método se llama automáticamente al acceder a la visualización de un archivo adjunto.
+        """
+
+        licencia = Licencia.objects.get(pk=id_licencia)
+        if licencia.datos_adjuntos_licencias:
+            archivo_path = licencia.datos_adjuntos_licencias.path
+
+            if not os.path.exists(archivo_path):
+                raise Http404("El archivo no existe.")
+
+            extension = os.path.splitext(archivo_path)[1].lower()
+            allowed_extensions = ['.pdf', '.docx', '.png', '.jpg', '.jpeg', '.gif']
+
+            if extension in allowed_extensions:
+                mime_type, _ = mimetypes.guess_type(archivo_path)
+                if mime_type is None:
+                    mime_type = 'application/octet-stream'
+                with open(archivo_path, 'rb') as file:
+                    response = HttpResponse(file.read(), content_type=mime_type)
+                    response['Content-Disposition'] = f'inline; filename={os.path.basename(archivo_path)}'
+                    return response
+            else:
+                return HttpResponse("El tipo de archivo no es compatible.")
+        else:
+            return HttpResponse("No hay archivo adjunto.")
