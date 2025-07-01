@@ -10,6 +10,7 @@ El proyecto actual tiene una estructura funcional, (OJO! Esto no quiere decir qu
 
 ### 2.1 Estructura recomendada del proyecto (Simple y escalable)
 
+```plaintext
 APP_PERMISOS/
 │
 ├── app_permisos/            
