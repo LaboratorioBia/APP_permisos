@@ -84,17 +84,7 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES={}
-
-if env.str("TIPO_ENTORNO")=='desarrollo':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
-if env.str("TIPO_ENTORNO") == "produccion":
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE':'mssql',
             'NAME': env.str("SQL_NAME_DATABASE2"),

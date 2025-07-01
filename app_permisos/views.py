@@ -253,14 +253,14 @@ class Inicio(LoginRequiredMixin,TemplateView):
                     # Crear una versión de texto plano del mensaje
                     plain_message = strip_tags(html_message)
 
-                    send_mail(
-                        subject='NOTIFICACION DE PERMISO',
-                        message=plain_message,
-                        from_email=None,
-                        recipient_list=recipient_list,
-                        html_message=html_message,
-                        fail_silently=False,
-                    ) 
+                    # send_mail(
+                    #     subject='NOTIFICACION DE PERMISO',
+                    #     message=plain_message,
+                    #     from_email=None,
+                    #     recipient_list=recipient_list,
+                    #     html_message=html_message,
+                    #     fail_silently=False,
+                    # ) 
                 return redirect('inicio') 
             else:
                 contexto = self.get_context_data(**kwargs)
@@ -318,15 +318,15 @@ class Inicio(LoginRequiredMixin,TemplateView):
                 # Crear una versión de texto plano del mensaje
                 plain_message = strip_tags(html_message)
 
-                print("Proximo a enviar el correo 111 _________________________******************")
-                send_mail(
-                    subject='NOTIFICACION DE LICENCIA',
-                    message=plain_message,
-                    from_email='jimmy.bustamante@prebel.com.co',
-                    recipient_list=recipient_lista,
-                    html_message=html_message,
-                    fail_silently=False,
-                )
+                # print("Proximo a enviar el correo 111 _________________________******************")
+                # send_mail(
+                #     subject='NOTIFICACION DE LICENCIA',
+                #     message=plain_message,
+                #     from_email='jimmy.bustamante@prebel.com.co',
+                #     recipient_list=recipient_lista,
+                #     html_message=html_message,
+                #     fail_silently=False,
+                # )
 
                 # Verificar si se debe enviar un correo adicional
                 if licencia.mayor_igual_dos_dias == "Si":
@@ -348,15 +348,15 @@ class Inicio(LoginRequiredMixin,TemplateView):
                     # Crear una versión de texto plano del mensaje
                     plain_message = strip_tags(html_message)
 
-                    print("Proximo a enviar el correo 222 _________________________******************")
-                    send_mail(
-                        subject='NOTIFICACION DE LICENCIA MAYOR A DOS DIAS',
-                        message=plain_message,
-                        from_email='jimmy.bustamante@prebel.com.co',
-                        recipient_list=['jimmy.bustamante@prebel.com.co'],
-                        html_message=html_message,
-                        fail_silently=False,
-                    )       
+                    # print("Proximo a enviar el correo 222 _________________________******************")
+                    # send_mail(
+                    #     subject='NOTIFICACION DE LICENCIA MAYOR A DOS DIAS',
+                    #     message=plain_message,
+                    #     from_email='jimmy.bustamante@prebel.com.co',
+                    #     recipient_list=['jimmy.bustamante@prebel.com.co'],
+                    #     html_message=html_message,
+                    #     fail_silently=False,
+                    # )       
                 else:
                     print(form_licencia.errors)
 
@@ -1379,14 +1379,14 @@ class ActualizarPermiso(UpdateView, LoginRequiredMixin):
             # Crear una versión de texto plano del mensaje
             plain_message = strip_tags(html_message)
 
-            send_mail(
-                subject='NOTIFICACION DE PERMISO RECHAZADA',
-                message=plain_message,
-                from_email=None,
-                recipient_list=[''],
-                html_message=html_message,
-                fail_silently=False,
-            )
+            # send_mail(
+            #     subject='NOTIFICACION DE PERMISO RECHAZADA',
+            #     message=plain_message,
+            #     from_email=None,
+            #     recipient_list=[''],
+            #     html_message=html_message,
+            #     fail_silently=False,
+            # )
         print("Processing form_valid")
         # print(form.cleaned_data)
         response = super().form_valid(form)
@@ -2352,14 +2352,14 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
                 # Crear una versión de texto plano del mensaje
                 plain_message = strip_tags(html_message)
 
-                send_mail(
-                    subject='NOTIFICACION DE LICENCIA: RECHAZADA POR GESTIÓN HUMANA',
-                    message=plain_message,
-                    from_email=None,
-                    recipient_list=['jimmy.bustamante@prebel.com.co'],
-                    html_message=html_message,
-                    fail_silently=False,
-                )
+                # send_mail(
+                #     subject='NOTIFICACION DE LICENCIA: RECHAZADA POR GESTIÓN HUMANA',
+                #     message=plain_message,
+                #     from_email=None,
+                #     recipient_list=['jimmy.bustamante@prebel.com.co'],
+                #     html_message=html_message,
+                #     fail_silently=False,
+                # )
 
         # Enviar correo cuando se rechaza la licencia
         if form.instance.verificacion_licencia == 'Rechazado':
@@ -2382,15 +2382,15 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
             # Crear una versión de texto plano del mensaje
             plain_message = strip_tags(html_message)
 
-            send_mail(
-                subject='NOTIFICACION DE LICENCIA RECHAZADA',
-                message=plain_message,
-                from_email=None,
-                # recipient_list=['sara.pena@prebel.com.co', 'diego.gallego@prebel.com.co'],
-                recipient_list=['jimmy.bustamante@prebel.com.co'],
-                html_message=html_message,
-                fail_silently=False,
-            )
+            # send_mail(
+            #     subject='NOTIFICACION DE LICENCIA RECHAZADA',
+            #     message=plain_message,
+            #     from_email=None,
+            #     # recipient_list=['sara.pena@prebel.com.co', 'diego.gallego@prebel.com.co'],
+            #     recipient_list=['jimmy.bustamante@prebel.com.co'],
+            #     html_message=html_message,
+            #     fail_silently=False,
+            # )
         print("Processing form_valid")
         response = super().form_valid(form)
         print("Form successfully processed")
