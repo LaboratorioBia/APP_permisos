@@ -98,7 +98,7 @@ urlpatterns = [
         GestionLicencias.actualizar_tabla_licencias_areas,
         name="actualizar_tabla_licencias_areas",
     ),
-    path("api/solicitudes/", api_solicitudes, name="api_solicitudes"),
+    path("api/solicitudes/", SolicitudesAPIView.as_view(), name="api_solicitudes"),
     path("resumen/", resumen_view, name="resumen"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

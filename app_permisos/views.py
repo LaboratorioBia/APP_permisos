@@ -63,6 +63,11 @@ import pandas as pd
 # Tipos de transacciones (atomic, commit, rollback)
 from django.db import transaction
 
+# Django Rest Framework
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import LicenciaSerializer
+
 """--------------------------------  GENERAL  --------------------------------"""
 
 
@@ -2814,30 +2819,20 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
         return response
 
 
-def api_solicitudes(request):
-    data = []
-    licencias = Licencia.objects.select_related("motivo_licencia", "creada_por").all()
+# region Solicitudes API View
+class SolicitudesAPIView(APIView):
+    """Vista para manejar solicitudes de licencias a través de la API."""
 
-    for lic in licencias:
-        data.append(
-            {
-                "id": lic.id,
-                "nombre_completo": lic.nombre_completo,
-                "cedula": lic.cedula,
-                "area": lic.area.nombre_area if lic.area else "",  # si area es FK
-                "fecha_inicio": lic.fecha_inicio or lic.fecha_inicio,
-                "fecha_fin": lic.fecha_fin or lic.fecha_fin,
-                "motivo": (
-                    lic.motivo_licencia.name_motivo_licencia
-                    if lic.motivo_licencia
-                    else ""
-                ),
-                "estado": lic.estado_licencia,
-                "creado_por": lic.creada_por.username if lic.creada_por else "",
-            }
-        )
-    return JsonResponse(data, safe=False)
+    def get(self, request):
+        licencias = Licencia.objects.all()
+        serializer = LicenciaSerializer(licencias, many=True)
+        return Response(serializer.data)
 
 
 def resumen_view(request):
+    """
+    Vista para renderizar la página de resumen."""
     return render(request, "resumen.html")
+
+
+# endregion

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Ver Resumen de Licencias{% endblock %}
+{% block title %}Resumen de Licencias{% endblock %}
 
 {% block content %}
 
@@ -26,95 +26,55 @@
 
 <br>
 
-<div class="col-sm-11 mx-auto">
-    {% if es_admin %}
-    <div id="filtro-fechas" class="text-center">
-        <label for="fecha-inicio">Desde:</label>
-        <input type="date" id="fecha-inicio" name="fecha-inicio">
+<div class="container mt-5">
+    <h2 class="mb-4">Resumen de Licencias</h2>
 
-        <label for="fecha-fin">Hasta:</label>
-        <input type="date" id="fecha-fin" name="fecha-fin">
-
-        <button id="filtrar-por-fechas" class="btn btn-primary">Filtrar</button>
-    </div>
-    {% endif %}
-
-    <br>
-
-    <select id="selectAreaLicencias" class="form-select" style="width: 120px; margin-right: 50px;"></select>
-
-    <br>
-
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="tabla-licencias" class="table table-striped table-bordered table-responsive">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Fecha Creación</th> 
-                            <th>Nombre Completo</th>
-                            <th>Cédula</th>
-                            <th>Área</th>
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
-                            <th>Motivo Licencia</th>
-                            <th class="bg-primary">Estado</th>
-                            <th>Creado por</th>
-                            {% if es_admin or es_lider or es_coordinador or es_superusuario or es_BP %}
-                            <th class="bg-success"></th>
-                            {% endif %}
-                        </tr>
-                    </thead>
-
-                    <tbody id="tabla-cuerpo-licencias">
-                        <!-- Se llenará dinámicamente con JS -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Fecha Inicio</th>
+                    <th>Nombre Completo</th>
+                    <th>Cédula</th>
+                    <th>Área</th>
+                    <th>Fecha Fin</th>
+                    <th>Motivo</th>
+                    <th>Estado</th>
+                    <th>Creado por</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-cuerpo-licencias">
+                <!-- Relleno dinámico desde JS -->
+            </tbody>
+        </table>
     </div>
 </div>
 
-<script>
+<script >
     document.addEventListener("DOMContentLoaded", function () {
-        fetch("/api/solicitudes/")
-            .then(response => response.json())
-            .then(data => {
-                const cuerpoTabla = document.getElementById("tabla-cuerpo-licencias");
-                cuerpoTabla.innerHTML = "";
+    fetch("/api/solicitudes/")
+        .then(response => response.json())
+        .then(data => {
+            const cuerpoTabla = document.getElementById("tabla-cuerpo-licencias");
+            cuerpoTabla.innerHTML = "";
 
-                data.forEach(licencia => {
-                    const fila = document.createElement("tr");
-
-                    fila.innerHTML = `
-                        <td>
-                            <span style="display:none;">${licencia.fecha_inicio}</span>
-                            ${licencia.fecha_inicio}
-                        </td>
-                        <td>${licencia.nombre_completo}</td>
-                        <td>${licencia.cedula}</td>
-                        <td>${licencia.area}</td>
-                        <td>${licencia.fecha_inicio}</td>
-                        <td>${licencia.fecha_fin}</td>
-                        <td>${licencia.motivo}</td>
-                        <td>${licencia.estado}</td>
-                        <td>${licencia.creado_por}</td>
-                        {% if es_admin or es_lider or es_coordinador or es_superusuario or es_BP %}
-                        <td>
-                            <a type="button" href="/licencias/update/${licencia.id}/" class="btn btn-success">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                        </td>
-                        {% endif %}
-                    `;
-                    cuerpoTabla.appendChild(fila);
-                });
-            })
-            .catch(error => console.error("Error al cargar licencias:", error));
-    });
+            data.forEach(licencia => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td>${licencia.fecha_inicio}</td>
+                    <td>${licencia.nombre_completo}</td>
+                    <td>${licencia.cedula}</td>
+                    <td>${licencia.area}</td>
+                    <td>${licencia.fecha_fin}</td>
+                    <td>${licencia.motivo_licencia}</td>
+                    <td>${licencia.estado}</td>
+                    <td>${licencia.creada_por}</td>
+                `;
+                cuerpoTabla.appendChild(fila);
+            });
+        })
+        .catch(error => console.error("Error al cargar licencias:", error));
+});
 </script>
-
-<script src="{% static 'js/javascript.js' %}"></script>
-<script src="{% static 'js/licenciaEdit.js' %}"></script>
 
 {% endblock %}

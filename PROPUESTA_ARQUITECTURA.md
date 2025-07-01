@@ -11,6 +11,10 @@ app_permisos/
 │   └── usuario.py
 |   └── etc....
 │
+├── serializers/
+│   ├── __init__.py
+│   ├── LicenciaSerializer.py   ← lógica de manejos de apis
+│   
 ├── services/
 │   ├── __init__.py
 │   ├── licencia_service.py   ← lógica de negocio de licencias
@@ -88,6 +92,7 @@ El proyecto cuenta actualmente con:
 app_permisos/
 ├── models/ # Modelos separados por entidad
 ├── services/ # Lógica de negocio aislada
+├── serializers/ # Lógica para el manejo de las apis
 ├── views/ # Vistas organizadas por dominio
 ├── forms/ # Formularios Django organizados
 ├── utils/ # Funciones reutilizables en demas clases del codigo
