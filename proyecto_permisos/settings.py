@@ -30,7 +30,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = True
 
 # ALLOWED_HOSTS = [env.str("ALLOWED_HOSTS")]
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app_permisos',
+    # 'app_permisos',
     'import_export'
 ]
 
