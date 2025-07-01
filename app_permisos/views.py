@@ -2395,3 +2395,29 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
         response = super().form_valid(form)
         print("Form successfully processed")
         return response
+
+# Vista para consolidar licencias en API
+from django.views.decorators.http import require_GET
+from django.utils.decorators import method_decorator
+
+@require_GET
+def solicitudes_api(request):
+    licencias = Licencia.objects.select_related('motivo_licencia', 'creada_por', 'area').all()
+
+    data = []
+    for licencia in licencias:
+        data.append({
+            'nombre_completo': licencia.nombre_completo,
+            'cedula': licencia.cedula,
+            'area': licencia.area.nombre_area if licencia.area else '',
+            'fecha_inicio': licencia.fecha_permiso or licencia.fecha_inicio,
+            'fecha_fin': licencia.fecha_fin_permiso or licencia.fecha_fin,
+            'motivo': licencia.motivo_licencia.name_motivo_licencia if licencia.motivo_licencia else '',
+            'estado': licencia.estado,
+            'creado_por': licencia.creada_por.username if licencia.creada_por else '',
+        })
+
+    return JsonResponse(data, safe=False)
+
+def resumen_view(request):
+    return render(request, 'resumen.html')

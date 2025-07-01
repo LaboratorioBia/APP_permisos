@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resumen de Solicitudes{% endblock %}
+
+{% block content %}
+<h2>Resumen de Solicitudes</h2>
+
+<table id="tabla-solicitudes" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre completo</th>
+            <th>Cédula</th>
+            <th>Área</th>
+            <th>Fecha inicio</th>
+            <th>Fecha fin</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+            <th>Creado por</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    fetch('/api/solicitudes/')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector('#tabla-solicitudes tbody');
+            data.forEach(item => {
+                const row = `
+                    <tr>
+                        <td>${item.nombre_completo}</td>
+                        <td>${item.cedula}</td>
+                        <td>${item.area}</td>
+                        <td>${item.fecha_inicio}</td>
+                        <td>${item.fecha_fin}</td>
+                        <td>${item.motivo}</td>
+                        <td>${item.estado}</td>
+                        <td>${item.creado_por}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
+</script>
+{% endblock %}

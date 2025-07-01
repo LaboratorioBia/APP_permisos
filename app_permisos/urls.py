@@ -3,6 +3,8 @@ from django.contrib import admin
 from app_permisos.views import *
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import solicitudes_api
+from .views import resumen_view
 
 urlpatterns = [
     #Main
@@ -28,6 +30,12 @@ urlpatterns = [
     path('actualizar_permisos_chart_dias/<str:fecha>/', actualizar_permisos_chart_dias, name='actualizar_permisos_chart_dias'),
     path('actualizar_permisos_chart_horas/', actualizar_permisos_chart_horas, name='actualizar_permisos_chart_horas'),
     path('actualizar_tabla_areas/<str:area_id>/', GestionPermisos.actualizar_tabla_areas, name='actualizar_tabla_areas'),
+
+    
+    # otras rutas...
+    path('api/solicitudes/', solicitudes_api, name='api_solicitudes'),
+    path('resumen/', resumen_view, name='resumen'),
+
 
     #Licencias
     path('ver_licencias',GestionLicencias.as_view(), name='ver licencias'),
