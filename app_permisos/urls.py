@@ -41,7 +41,13 @@ urlpatterns = [
     path('actualizar_licencias_chart_area/<str:area_id>/', actualizar_licencias_chart_area, name='actualizar_licencias_chart_area'),
     path('actualizar_licencias_chart_dias/<str:fecha>/', actualizar_licencias_chart_dias, name='actualizar_licencias_chart_dias'),
     path('actualizar_tabla_licencias_areas/<str:area_id>/', GestionLicencias.actualizar_tabla_licencias_areas, name='actualizar_tabla_licencias_areas'),
+
+    # APIs
+    path('api/solicitudes/', api_solicitudes, name='api_solicitudes'),
+    path('resumen/', resumen_view, name='resumen'),
+
 ]  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 """
 Módulo de URL para la aplicación 'app_permisos'.

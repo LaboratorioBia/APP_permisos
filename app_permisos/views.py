@@ -16,6 +16,13 @@ from django.views.generic.edit import UpdateView
 # Models
 from .models import Permiso, Licencia, Area
 
+# Rest Framework
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+# Serializers
+from .serializers import LicenciaSerializer
+
 # Forms
 from .forms import PermisoForm, LicenciaForm
 
@@ -2395,3 +2402,20 @@ class ActualizarLicencia(UpdateView, LoginRequiredMixin):
         response = super().form_valid(form)
         print("Form successfully processed")
         return response
+
+
+
+@api_view(['GET'])
+def api_solicitudes(request):
+    """
+    Devuelve un listado consolidado de licencias en formato JSON.
+    """
+    licencias = Licencia.objects.select_related('area', 'motivo_licencia', 'creada_por').all()
+    serializer = LicenciaSerializer(licencias, many=True)
+    return Response(serializer.data)
+
+def resumen_view(request):
+    """
+    Renderiza la vista de tabla HTML con AJAX.
+    """
+    return render(request, 'resumen.html')

@@ -9,28 +9,29 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import environ
 from pathlib import Path
 import os
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
 
-env = environ.Env()
-environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = [env.str("ALLOWED_HOSTS")]
-# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS")]
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -40,8 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'app_permisos',
-    'import_export'
+    'app_permisos',
+    'import_export',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +61,7 @@ ROOT_URLCONF = 'proyecto_permisos.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [],
+        'DIRS': [],
         'DIRS': [
             os.path.join(BASE_DIR, 'app_permisos/templates'),
             os.path.join(BASE_DIR, 'app_permisos/templates/modules'),
@@ -79,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'proyecto_permisos.wsgi.application'
+#WSGI_APPLICATION = 'proyecto_permisos.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -87,10 +89,10 @@ TEMPLATES = [
 DATABASES = {
         'default': {
             'ENGINE':'mssql',
-            'NAME': env.str("SQL_NAME_DATABASE2"),
-            'USER': env.str("SQL_USER_DATABASE"),
-            'PASSWORD':env.str("SQL_PASSWORD_DATABASE"),
-            'HOST':env.str("SQL_HOST"),
+            'NAME': os.getenv("SQL_NAME_DATABASE2"),
+            'USER': os.getenv("SQL_USER_DATABASE"),
+            'PASSWORD':os.getenv("SQL_PASSWORD_DATABASE"),
+            'HOST':os.getenv("SQL_HOST"),
             'PORT':'',
             'OPTIONS':{
                 'driver': 'ODBC Driver 17 for SQL Server',
@@ -162,10 +164,8 @@ LOGIN_REDIRECT_URL = reverse_lazy('inicio')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Usar el backend SMTP
 EMAIL_HOST = 'smtp.office365.com'  # Servidor SMTP de Outlook
 EMAIL_PORT = 587  # Puerto SMTP para Outlook con TLS
-# print(env.str("EMAIL_PRAC"))
-# print(env.str("PASS_PRAC"))
-EMAIL_HOST_USER = env.str("EMAIL_PRAC")
-EMAIL_HOST_PASSWORD = env.str("PASS_PRAC")  # Contraseña de tu cuenta de Outlook
+EMAIL_HOST_USER = os.getenv("EMAIL_PRAC")
+EMAIL_HOST_PASSWORD = os.getenv("PASS_PRAC")  # Contraseña de tu cuenta de Outlook
 EMAIL_USE_TLS = True  # Usar TLS para la conexión segura con Outlook
 EMAIL_USE_SSL = False  # No usar SSL (SSL es diferente de TLS)
 EMAIL_SSL_KEYFILE = None
@@ -173,4 +173,4 @@ EMAIL_SSL_CERTFILE = None
 
 
 # Configuración adicional
-DEFAULT_FROM_EMAIL =  env.str("EMAIL_PRAC")
+DEFAULT_FROM_EMAIL =  os.getenv("EMAIL_PRAC")

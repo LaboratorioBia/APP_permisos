@@ -26,6 +26,9 @@
 <div id="botones-crear" class="botones-crear">
     <button id="crear-permiso" class="crear-permiso btn btn-outline-success" {% if es_coordinador or es_admin or es_BP %}disabled{% endif %}>Crear Permiso</button>
     <button id="crear-licencia" class="crear-licencias btn btn-outline-success" {% if es_lider or es_admin or es_BP %}disabled{% endif %} >Crear Licencia</button>
+    <a href="{% url 'resumen' %}" class="ver-resumen btn btn-outline-success" style="color: black;">
+        Ver Resumen de Solicitudes
+    </a> <!-- ELEMENTO MODIFICADO POR ALAN -->
 </div>
 
 <br>
