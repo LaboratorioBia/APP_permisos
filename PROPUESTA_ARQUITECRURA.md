@@ -48,6 +48,7 @@ APP_PERMISOS/
 * views.py	Si crece, dividir en views/solicitudes.py, views/usuarios.py, etc.
 * urls.py	Modularizar las rutas por área. Usar include().
 * src/   No es necesario
+* .html   La estructura del codigo segmentarla por bloques para una mejor legibilidad.
 
 ### 2.2 Recomendaciones específicas por componente
 
